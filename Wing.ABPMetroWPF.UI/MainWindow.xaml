@@ -1,0 +1,124 @@
+﻿<controls:MetroWindow x:Class="Wing.ABPMetroWPF.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:viewModel="clr-namespace:Wing.ABPMetroWPF.UI.ViewModel"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"   
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform" 
+        Title="MainWindow" Height="600" Width="800" ShowIconOnTitleBar="True" WindowStartupLocation="CenterScreen"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    <controls:MetroWindow.Resources>
+        <Ellipse x:Key="AppThemeMenuIcon"
+                     Width="16"
+                     Height="16"
+                     x:Shared="False"
+                     Fill="{Binding ColorBrush, Mode=OneWay}"
+                     Stroke="{Binding BorderColorBrush, Mode=OneWay}"
+                     StrokeThickness="1" />
+        <Ellipse x:Key="AccentMenuIcon"
+                     Width="16"
+                     Height="16"
+                     x:Shared="False"
+                     Fill="{Binding ColorBrush, Mode=OneWay}" />
+        <Style x:Key="AppThemeMenuItemStyle"
+                   BasedOn="{StaticResource MetroMenuItem}"
+                   TargetType="{x:Type MenuItem}">
+            <Setter Property="Command" Value="{Binding ChangeAccentCommand}" />
+            <Setter Property="Header" Value="{Binding Name, Mode=OneWay}" />
+            <Setter Property="Icon" Value="{StaticResource AppThemeMenuIcon}" />
+        </Style>
+        <Style x:Key="AccentColorMenuItemStyle"
+                   BasedOn="{StaticResource MetroMenuItem}"
+                   TargetType="{x:Type MenuItem}">
+            <Setter Property="Command" Value="{Binding ChangeAccentCommand}" />
+            <Setter Property="Header" Value="{Binding Name, Mode=OneWay}" />
+            <Setter Property="Icon" Value="{StaticResource AccentMenuIcon}" />
+        </Style>
+        
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <controls:Flyout x:Name="themeFlyout"
+                             Header="颜色主题" 
+                             Position="Right" 
+                             Width="200" 
+                             Theme="Inverse"
+                             Margin="0,30,0,0">
+                <ListView x:Name="themeListView" Margin="30,0,0,0" 
+                          ItemsSource="{Binding AccentColors}">
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse
+                                         Width="16"
+                                         Height="16"
+                                         Fill="{Binding ColorBrush, Mode=OneWay}"></Ellipse>
+                                <TextBlock Text="{Binding Name}"  Margin="5,0,0,0"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown" >
+                                        <cmd:EventToCommand Command="{Binding ChangeAccentCommand}" CommandParameter="{Binding ElementName=themeListView}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button x:Name="ThemeButton" ToolTip="颜色主题" Click="ThemeButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconModern Kind="ClothesShirt"/>
+                </StackPanel>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+    <controls:MetroWindow.LeftWindowCommands>
+        <controls:WindowCommands>
+            <Button x:Name="GoBackButton"
+                    Click="GoBack_OnClick">
+                <iconPacks:PackIconMaterial Kind="ArrowLeft" />
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.LeftWindowCommands>
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="MenuItemTemplate"
+                          DataType="{x:Type viewModel:MenuItem}">
+                <Grid Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="White"
+                                    Focusable="False"
+                                    Content="{Binding Icon}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Foreground="White"
+                               Text="{Binding Text}" />
+                </Grid>
+            </DataTemplate>
+        </Grid.Resources>
+        <controls:HamburgerMenu x:Name="HamburgerMenuControl"
+                                Foreground="White"
+                                PaneBackground="#FF444444"
+                                IsPaneOpen="True"
+                                ItemsSource="{Binding Menu}"
+                                ItemClick="HamburgerMenuControl_OnItemClick"
+                                OptionsItemClick="HamburgerMenuControl_OnItemClick"
+                                OptionsItemsSource="{Binding OptionsMenu}"
+                                ItemTemplate="{StaticResource MenuItemTemplate}"
+                                OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                                DisplayMode="CompactInline">
+        </controls:HamburgerMenu>
+    </Grid>
+</controls:MetroWindow>
