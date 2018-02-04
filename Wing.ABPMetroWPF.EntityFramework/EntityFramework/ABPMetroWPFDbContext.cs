@@ -1,12 +1,14 @@
 ﻿using System.Data.Entity;
 using Abp.EntityFramework;
-using Wing.ABPMetroWPF.People;
+using Abp.Zero.EntityFramework;
+using Wing.ABPMetroWPF.Authorization.Roles;
+using Wing.ABPMetroWPF.Authorization.Users;
+using Wing.ABPMetroWPF.MultiTenancy;
 
 namespace Wing.ABPMetroWPF.EntityFramework
 {
-    public class ABPMetroWPFDbContext : AbpDbContext
-    {
-        public virtual IDbSet<Person> People { get; set; }
+    public class ABPMetroWPFDbContext : AbpZeroDbContext<Tenant, Role, User>
+	{
 
         /* NOTE: 
          *   Setting "Default" to base class helps us when working migration commands on Package Manager Console.

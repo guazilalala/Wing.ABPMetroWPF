@@ -1,13 +1,10 @@
-﻿using System.Reflection;
+﻿using Abp.AutoMapper;
 using Abp.Modules;
-using Wing.ABPMetroWPF.People;
-using Wing.ABPMetroWPF.People.Dto;
-using AutoMapper;
-using Abp.AutoMapper;
+using System.Reflection;
 
 namespace Wing.ABPMetroWPF
 {
-    [DependsOn(typeof(ABPMetroWPFCoreModule))]
+	[DependsOn(typeof(ABPMetroWPFCoreModule))]
 	[DependsOn(typeof(AbpAutoMapperModule))]
 	public class ABPMetroWPFApplicationModule : AbpModule
     {

@@ -1,24 +1,20 @@
-using Wing.ABPMetroWPF.EntityFramework;
-using Wing.ABPMetroWPF.People;
-using System.Data.Entity.Migrations;
-
 namespace Wing.ABPMetroWPF.Migrations
 {
-	internal sealed class Configuration : DbMigrationsConfiguration<ABPMetroWPFDbContext>
+	using System.Data.Entity.Migrations;
+
+	internal sealed class Configuration : DbMigrationsConfiguration<Wing.ABPMetroWPF.EntityFramework.ABPMetroWPFDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "ABPMetroWPF";
         }
 
-        protected override void Seed(ABPMetroWPFDbContext context)
+        protected override void Seed(Wing.ABPMetroWPF.EntityFramework.ABPMetroWPFDbContext context)
         {
-            context.People.AddOrUpdate(
-                p => p.Name,
-                new Person {Name = "Halil"},
-                new Person {Name = "Emre"}
-                );
+            //  This method will be called after migrating to the latest version.
+
+            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
+            //  to avoid creating duplicate seed data.
         }
     }
 }
