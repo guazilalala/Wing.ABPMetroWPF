@@ -17,7 +17,8 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
+using Wing.ABPMetroWPF.UI.ViewModel.Account;
 
 namespace Wing.ABPMetroWPF.UI.ViewModel
 {
@@ -43,11 +44,11 @@ namespace Wing.ABPMetroWPF.UI.ViewModel
 			}
 		}
 
-		public LoginViewModel Login
+		public AccountViewModel Account
 		{
 			get
 			{
-				return IocManager.Instance.Resolve<LoginViewModel>();
+				return IocManager.Instance.Resolve<AccountViewModel>();
 			}
 		}
 

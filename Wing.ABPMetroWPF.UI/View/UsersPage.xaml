@@ -4,22 +4,157 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:local="clr-namespace:Wing.ABPMetroWPF.UI.View"
+      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       Title="UserPage"
       d:DesignHeight="300"
-      d:DesignWidth="300"
+      d:DesignWidth="500"
       Foreground="{DynamicResource TextBrush}"
       mc:Ignorable="d">
 
     <Grid Background="{DynamicResource AccentColorBrush4}">
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <iconPacks:PackIconFontAwesome Width="48"
                                        Height="48"
-                                       Margin="10"
+                                       Margin="10,10,10,0"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Top"
                                        Foreground="{DynamicResource GrayBrush3}"
-                                       Kind="UserRegular" />
+                                       Kind="UserRegular"
+                                       Grid.Row="0"/>
+        <Grid Margin="6,0,6,6" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="用户" FontSize="24" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Background="White" BorderBrush="#FF848484" Margin="8,0,8,0" BorderThickness="0,0,1,0" Height="33" Width="1" VerticalAlignment="Center"/>
+                    <TextBlock Text="管理用户及权限" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <StackPanel.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </StackPanel.Resources>
+                    <Button Margin="6,0,0,0" Height="30" Width="90" Cursor="Hand">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconModern Kind="OfficeExcel" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="导出Excel" FontSize="12" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Margin="6,0,0,0" Height="30" Width="90" Cursor="Hand">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome Kind="UserPlusSolid" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="添加用户" FontSize="12" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
+            <StackPanel Grid.Row="1" Margin="0,14,0,0">
+                <TextBox Name="searchTextBox"
+                         Controls:TextBoxHelper.ButtonCommand="{Binding TextBoxButtonCmdWithParameter, Mode=OneWay}"
+                         Controls:TextBoxHelper.ButtonCommandParameter="{Binding ElementName=searchTextBox, Path=Text}"
+                         Controls:TextBoxHelper.Watermark="搜索..."
+                         Style="{DynamicResource SearchMetroTextBox}" />
+            </StackPanel>
+
+            <Grid x:Name="advancedSearchGrid" Grid.Row="2" Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" Margin="0,0,5,0"
+                          Controls:TextBoxHelper.ClearTextButton="True"
+                          Controls:TextBoxHelper.UseFloatingWatermark="True"
+                          Controls:TextBoxHelper.Watermark="按许可搜索"
+                          SelectedIndex="0">
+                </ComboBox>
+                <ComboBox Grid.Column="1" Margin="5,0,0,0"
+                          Controls:TextBoxHelper.ClearTextButton="True"
+                          Controls:TextBoxHelper.UseFloatingWatermark="True"
+                          Controls:TextBoxHelper.Watermark="按角色搜索"
+                          SelectedIndex="0">
+                </ComboBox>
+                <Button Grid.Row="1" Grid.ColumnSpan="2"  Margin="0,10,0,0" Width="70" HorizontalAlignment="Right"
+                        Style="{DynamicResource MetroFlatButton}" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <iconPacks:PackIconModern Kind="Refresh" Margin="0,0,5,0"/>
+                        <TextBlock Text="刷新" FontSize="12" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Row="3" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <iconPacks:PackIconMaterialLight Kind="ChevronDown" Width="10" Height="10" VerticalAlignment="Center"/>
+                <iconPacks:PackIconMaterialLight Kind="ChevronUp" Width="10" Height="10" VerticalAlignment="Center"/>
+                <TextBlock  Grid.Column="1" Text="显示高级过滤" FontSize="10" Margin="3,0,0,0" Cursor="Hand"/>
+            </Grid>
+            <Grid Grid.Row="4" Margin="0,10,0,0">
+                <DataGrid x:Name="MetroDataGrid"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  Margin="5"
+                  AutoGenerateColumns="False"
+                  HeadersVisibility="All"
+                  ItemsSource="{Binding Path=Albums}"
+                  RowHeaderWidth="20"
+                  SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="操作" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Controls:DropDownButton Content="操作" Width="70" BorderThickness="0" Height="20" Background="#FFD5D5D5">
+                                        <Controls:DropDownButton.Icon>
+                                            <iconPacks:PackIconFontAwesome Kind="CogSolid" />
+                                        </Controls:DropDownButton.Icon>
+                                    </Controls:DropDownButton>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Binding="{Binding Artist.Name}" Header="用户名" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="姓名" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="角色" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="邮箱地址" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="邮箱地址验证" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="激活" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="上次登录时间" />
+                        <DataGridTextColumn Binding="{Binding Genre.Name}" Header="创建时间" />
+                    </DataGrid.Columns>
+                    <DataGrid.Style>
+                        <Style BasedOn="{StaticResource MetroDataGrid}" TargetType="{x:Type DataGrid}">
+                            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GrayBrush10}" />
+                        </Style>
+                    </DataGrid.Style>
+                    <DataGrid.RowStyle>
+                        <Style BasedOn="{StaticResource MetroDataGridRow}" TargetType="{x:Type DataGridRow}">
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
