@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
 using Abp.Modules;
+using Abp.Zero;
 
 namespace Wing.ABPMetroWPF
 {
-    public class ABPMetroWPFCoreModule : AbpModule
+	[DependsOn(typeof(AbpZeroCoreModule))]
+	public class ABPMetroWPFCoreModule : AbpModule
     {
         public override void Initialize()
         {

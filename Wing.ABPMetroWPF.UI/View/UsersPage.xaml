@@ -10,7 +10,8 @@
       d:DesignHeight="300"
       d:DesignWidth="500"
       Foreground="{DynamicResource TextBrush}"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+      DataContext="{Binding Users, Source={StaticResource Locator}}">
 
     <Grid Background="{DynamicResource AccentColorBrush4}">
         <Grid.RowDefinitions>
@@ -57,7 +58,8 @@
                             <TextBlock Text="导出Excel" FontSize="12" Margin="2,0,0,0"/>
                         </StackPanel>
                     </Button>
-                    <Button Margin="6,0,0,0" Height="30" Width="90" Cursor="Hand">
+                    <Button Margin="6,0,0,0" Height="30" Width="90" Cursor="Hand"
+                            Command="{Binding OpenAddUserViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconFontAwesome Kind="UserPlusSolid" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <TextBlock Text="添加用户" FontSize="12" Margin="2,0,0,0"/>

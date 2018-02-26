@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using Wing.ABPMetroWPF.UI.ViewModel;
 
 namespace Wing.ABPMetroWPF.UI.View
 {
@@ -10,6 +11,14 @@ namespace Wing.ABPMetroWPF.UI.View
 		public AddUser()
 		{
 			InitializeComponent();
+
+			this.Unloaded += AddUser_Unloaded;
+		}
+
+		private void AddUser_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			AddUserViewModel viewModel = this.DataContext as AddUserViewModel;
+			viewModel.Cleanup();
 		}
 	}
 }

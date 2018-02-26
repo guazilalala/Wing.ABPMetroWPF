@@ -1,23 +1,15 @@
 ﻿using Abp.Authorization.Roles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using Wing.ABPMetroWPF.Authorization.Users;
 
 namespace Wing.ABPMetroWPF.Authorization.Roles
 {
-	/// <summary>
-	/// Represents a role in the system.
-	/// </summary>
 	public class Role : AbpRole<User>
 	{
-		//Can add application specific role properties here
+		public const int MaxDescriptionLength = 5000;
 
 		public Role()
 		{
-
 		}
 
 		public Role(int? tenantId, string displayName)
@@ -31,5 +23,8 @@ namespace Wing.ABPMetroWPF.Authorization.Roles
 		{
 
 		}
+
+		[MaxLength(MaxDescriptionLength)]
+		public string Description { get; set; }
 	}
 }

@@ -179,7 +179,11 @@
     <Compile Include="ABPMetroWPFConsts.cs" />
     <Compile Include="ABPMetroWPFCoreModule.cs" />
     <Compile Include="Authorization\Roles\Role.cs" />
+    <Compile Include="Authorization\Roles\RoleManager.cs" />
+    <Compile Include="Authorization\Roles\RoleStore.cs" />
     <Compile Include="Authorization\Users\User.cs" />
+    <Compile Include="Authorization\Users\UserManager.cs" />
+    <Compile Include="Authorization\Users\UserStore.cs" />
     <Compile Include="MultiTenancy\Tenant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

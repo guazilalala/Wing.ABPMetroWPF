@@ -42,14 +42,9 @@ namespace Wing.ABPMetroWPF.UI
 			#endregion
 
 			//将LoginView设为主窗体
-
-			AddUser addUser = new AddUser();
-			MainWindow = addUser;
-			MainWindow.Show();
-
 			LoginView loginView = _bootstrapper.IocManager.Resolve<LoginView>();
-			//MainWindow = loginView;
-			//MainWindow.Show();
+			MainWindow = loginView;
+			MainWindow.Show();
 
 			//注册消息,返回true为登录成功
 			Messenger.Default.Register<bool?>(this,"Login", m =>

@@ -52,6 +52,22 @@ namespace Wing.ABPMetroWPF.UI.ViewModel
 			}
 		}
 
+		public UsersViewModel Users
+		{
+			get
+			{
+				return IocManager.Instance.Resolve<UsersViewModel>();
+			}
+		}
+
+		public AddUserViewModel AddUser
+		{
+			get
+			{
+				return IocManager.Instance.Resolve<AddUserViewModel>();
+			}
+		}
+
 		public static void Cleanup()
         {
             // TODO Clear the ViewModels

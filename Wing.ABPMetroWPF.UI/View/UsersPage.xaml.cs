@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace Wing.ABPMetroWPF.UI.View
         public UsersPage()
         {
             InitializeComponent();
+
+			Messenger.Default.Register<NotificationMessageAction<bool>>(this,"OpenAddUserView",msg => 
+			{
+				var addUserView = new AddUser();
+				msg.Execute(addUserView.ShowDialog());			
+			});
+
+			this.Unloaded += (s,e) => Messenger.Default.Unregister(this);
         }
-    }
+	}
 }
