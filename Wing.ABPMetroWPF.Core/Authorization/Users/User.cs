@@ -2,6 +2,7 @@
 using Abp.Extensions;
 using Microsoft.AspNet.Identity;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Wing.ABPMetroWPF.Authorization.Users
 {

@@ -35,20 +35,20 @@ namespace Wing.ABPMetroWPF.Users
 			CheckCreatePermission();
 
 			var user = ObjectMapper.Map<User>(input);
+
 			user.TenantId = AbpSession.TenantId;
 			user.Password = new PasswordHasher().HashPassword(input.Password);
 			user.IsEmailConfirmed = true;
 
-			//分配角色
-			user.Roles = new Collection<UserRole>();
-			//foreach(var roleName in input.RoleNames)
-			//{
-			//	var role = await _roleManager.GetRoleByNameAsync(roleName);
-			//	user.Roles.Add(new UserRole(AbpSession.TenantId, user.Id, role.Id));
-			//}
-
 			CheckErrors(await _userManager.CreateAsync(user));
 
+			//分配角色
+			if(input.RoleNames != null)
+			{
+				CheckErrors(await _userManager.SetRoles(user, input.RoleNames));
+			}
+
+			CurrentUnitOfWork.SaveChanges();
 			return MapToEntityDto(user);
 		}
 

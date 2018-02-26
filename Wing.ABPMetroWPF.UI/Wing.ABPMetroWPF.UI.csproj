@@ -387,15 +387,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Data\ABPMetroWPF.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\ABPMetroWPF_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>ABPMetroWPF.mdf</DependentUpon>
-    </Content>
+    <Folder Include="Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

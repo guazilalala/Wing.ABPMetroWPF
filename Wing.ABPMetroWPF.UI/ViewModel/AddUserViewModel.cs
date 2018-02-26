@@ -8,6 +8,7 @@ using Abp.ObjectMapping;
 using AutoMapper;
 using System;
 using Abp.Runtime.Validation;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Wing.ABPMetroWPF.UI.ViewModel
 {
@@ -33,9 +34,11 @@ namespace Wing.ABPMetroWPF.UI.ViewModel
 		private async void AddUser()
 		{
 			var user = Mapper.Map<CreateUserModel>(User);
+			user.Password = "123qwe";
 			try
 			{
-				await _userAppService.Create(user);
+			  var result = await _userAppService.Create(user);
+				Messenger.Default.Send<object>(null,"AddUserViewSave");
 			}
 			catch (AbpValidationException ex)
 			{

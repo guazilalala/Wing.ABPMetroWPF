@@ -35,7 +35,7 @@
                              Controls:TextBoxHelper.WatermarkAlignment="Left"
                              SpellCheck.IsEnabled="True"
                              ToolTip="姓名" FontFamily="Microsoft YaHei UI"
-                             Text="{Binding User.Name, Mode=TwoWay}">
+                             Text="{Binding User.FullName, Mode=TwoWay}">
                         </TextBox>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Margin="0,0,0,8">
@@ -45,7 +45,8 @@
                              Controls:TextBoxHelper.ClearTextButton="True"
                              Controls:TextBoxHelper.WatermarkAlignment="Left"
                              SpellCheck.IsEnabled="True"
-                             ToolTip="邮箱地址" FontFamily="Microsoft YaHei UI">
+                             ToolTip="邮箱地址" FontFamily="Microsoft YaHei UI"
+                             Text="{Binding User.EmailAddress, Mode=TwoWay}">
                         </TextBox>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Margin="0,0,0,8">
@@ -55,7 +56,8 @@
                              Controls:TextBoxHelper.ClearTextButton="True"
                              Controls:TextBoxHelper.WatermarkAlignment="Left"
                              SpellCheck.IsEnabled="True"
-                             ToolTip="手机号码" FontFamily="Microsoft YaHei UI">
+                             ToolTip="手机号码" FontFamily="Microsoft YaHei UI"
+                            Text="{Binding User.PhoneNumber}">
                         </TextBox>
                     </StackPanel>
                     <StackPanel Grid.Row="3" Margin="0,0,0,12">
@@ -65,7 +67,8 @@
                              Controls:TextBoxHelper.ClearTextButton="True"
                              Controls:TextBoxHelper.WatermarkAlignment="Left"
                              SpellCheck.IsEnabled="True"
-                             ToolTip="用户名" FontFamily="Microsoft YaHei UI">
+                             ToolTip="用户名" FontFamily="Microsoft YaHei UI"
+                            Text="{Binding User.UserName}">
                         </TextBox>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Margin="0,0,0,8">
@@ -77,7 +80,7 @@
                     </StackPanel>
                     <Border Grid.Row="5" Margin="0,30,0,21" BorderThickness="0,1,0,0" Height="1" Background="White" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
                     <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Margin="0,0,10,0" Width="80" Cursor="Hand" Style="{DynamicResource MetroFlatButton}">
+                        <Button x:Name="CancelButton" Margin="0,0,10,0" Width="80" Cursor="Hand" Style="{DynamicResource MetroFlatButton}" Click="CancelButton_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterialLight Kind="Cancel" Margin="0,0,3,0" VerticalAlignment="Center" />
                                 <TextBlock Text="取消" FontSize="16"/>
