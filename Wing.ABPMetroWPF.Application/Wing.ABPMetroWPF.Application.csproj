@@ -185,6 +185,7 @@
     <Compile Include="ABPMetroWPFApplicationModule.cs" />
     <Compile Include="ABPMetroWPFAppServiceBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roles\RoleDto.cs" />
     <Compile Include="Users\Dto\CreateUserDto.cs" />
     <Compile Include="Users\Dto\UpdateUserDto.cs" />
     <Compile Include="Users\Dto\UserDto.cs" />

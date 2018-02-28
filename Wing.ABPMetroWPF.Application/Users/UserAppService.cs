@@ -5,6 +5,7 @@ using Abp.Domain.Repositories;
 using Abp.IdentityFramework;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Wing.ABPMetroWPF.Authorization.Roles;
@@ -67,14 +68,15 @@ namespace Wing.ABPMetroWPF.Users
 			throw new NotImplementedException();
 		}
 
-		public override Task<PagedResultDto<UserDto>> GetAll(PagedResultRequestDto input)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override Task<UserDto> Update(UpdateUserDto input)
 		{
 			throw new NotImplementedException();;
+		}
+
+		public async Task<ListResultDto<RoleDto>> GetRoles()
+		{
+			var roles = await _roleRepository.GetAllListAsync();
+			return new ListResultDto<RoleDto>(ObjectMapper.Map<List<RoleDto>>(roles));
 		}
 	}
 }
