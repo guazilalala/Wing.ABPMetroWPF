@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.Core", "Wing.ABPMetroWPF.Core\Wing.ABPMetroWPF.Core.csproj", "{17298EA0-AF73-4F30-B6F1-2066100D7D74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.Core", "src\Wing.ABPMetroWPF.Core\Wing.ABPMetroWPF.Core.csproj", "{17298EA0-AF73-4F30-B6F1-2066100D7D74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.Application", "Wing.ABPMetroWPF.Application\Wing.ABPMetroWPF.Application.csproj", "{EDF5D964-4C0F-4F19-B674-58A38A5E5401}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.Application", "src\Wing.ABPMetroWPF.Application\Wing.ABPMetroWPF.Application.csproj", "{EDF5D964-4C0F-4F19-B674-58A38A5E5401}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.EntityFramework", "Wing.ABPMetroWPF.EntityFramework\Wing.ABPMetroWPF.EntityFramework.csproj", "{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.EntityFramework", "src\Wing.ABPMetroWPF.EntityFramework\Wing.ABPMetroWPF.EntityFramework.csproj", "{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DFA48E27-7D53-4955-A722-3D91A7119BE7}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,7 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DFA48E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.UI", "Wing.ABPMetroWPF.UI\Wing.ABPMetroWPF.UI.csproj", "{C4442C7E-8BCD-4245-B713-BFB21821F77A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.ABPMetroWPF.UI", "src\Wing.ABPMetroWPF.UI\Wing.ABPMetroWPF.UI.csproj", "{C4442C7E-8BCD-4245-B713-BFB21821F77A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{934FE16D-C4BD-42AB-B39B-30C1CA18EA71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{63738088-60CE-432B-8EBD-4B1903875E0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +47,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17298EA0-AF73-4F30-B6F1-2066100D7D74} = {934FE16D-C4BD-42AB-B39B-30C1CA18EA71}
+		{EDF5D964-4C0F-4F19-B674-58A38A5E5401} = {934FE16D-C4BD-42AB-B39B-30C1CA18EA71}
+		{3979F157-DEB0-4878-AB1D-4CEF6B5A1300} = {934FE16D-C4BD-42AB-B39B-30C1CA18EA71}
+		{C4442C7E-8BCD-4245-B713-BFB21821F77A} = {934FE16D-C4BD-42AB-B39B-30C1CA18EA71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {361480B7-B739-47D6-BFCA-B0912DCE6C26}
