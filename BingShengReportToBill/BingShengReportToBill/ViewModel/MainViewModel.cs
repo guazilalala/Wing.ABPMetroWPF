@@ -1,3 +1,4 @@
+using BingShengReportToBill.Helper;
 using BingShengReportToBill.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -5,7 +6,11 @@ using GalaSoft.MvvmLight.Threading;
 using NLog;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BingShengReportToBill.ViewModel
@@ -25,7 +30,7 @@ namespace BingShengReportToBill.ViewModel
 	public class MainViewModel : ViewModelBase
 	{
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
+		private readonly AppConfig _appConfig = new AppConfig();
 		private ObservableCollection<Order> _orders;
 		private Order _selectedOrder;
 		private int _selectedIndex;
@@ -80,17 +85,33 @@ namespace BingShengReportToBill.ViewModel
 		#region Functions
 		private void UploadOrder(DateTime date)
 		{
+			#region 验证配置信息
+			List<ValidationResult> validationResult;
+			var validation = ValidateHelper.ValidateConfig(_appConfig, out validationResult);
+			if (!validation)
+			{
+				string resultStr = string.Join<ValidationResult>("|", validationResult.ToArray());
+			}
+			#endregion
+
+
+
 			var uploadDate = date.ToString("yyyy-MM-dd");
 
 			Task.Factory.StartNew(() =>
 			{
-				DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				while (true)
 				{
-					var order = new Order { Id = DateTime.Now.ToString("yyyyMMddHHmmss"), UploadSuccess = true };
-					Orders.Add(order);
-					SelectedOrder = order;
-					SelectedIndex = Orders.Count -1;
-				});
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+					{
+						var order = new Order { Id = DateTime.Now.ToString("yyyyMMddHHmmss"), UploadSuccess = true, UploadTime = DateTime.Now };
+						Orders.Add(order);
+						SelectedOrder = order;
+					});
+
+					Thread.Sleep(1000);
+				}
+
 			});
 		}
 

@@ -8,6 +8,8 @@ namespace BingShengReportToBill.Model
     public class Order
     {
 		public string Id { get; set; }
+
+		public DateTime UploadTime { get; set; }
 		public bool UploadSuccess { get; set; }
 	}
 }

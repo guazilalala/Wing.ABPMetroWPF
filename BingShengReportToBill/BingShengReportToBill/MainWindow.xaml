@@ -6,7 +6,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BingShengReportToBill"
-        mc:Ignorable="d"
+    xmlns:converter="clr-namespace:BingShengReportToBill.Converter"
+    mc:Ignorable="d"
         Title="炳胜上报账单" Height="350" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
     DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Control:MetroWindow.Resources>
@@ -16,6 +17,7 @@
             <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />
         </Style>
+        <converter:UploadSuccessConverter x:Key="UploadSuccessConverter"/>
     </Control:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -38,22 +40,37 @@
                     CommandParameter="{Binding ElementName=uploadDatePciker, Path=SelectedDate}">
             </Button>
         </StackPanel>
-        <ListView Margin="10"
+        <DataGrid Margin="10" 
                   Grid.Row="1"
-                  Style="{StaticResource VirtualisedMetroListView}"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  AutoGenerateColumns="False"
+                  GridLinesVisibility="All"
                   ItemsSource="{Binding Orders, Mode=OneWay}"
                   SelectedItem="{Binding SelectedOrder, Mode=OneWay}"
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Id}" Header="订单号" />
-                    <GridViewColumn DisplayMemberBinding="{Binding UploadSuccess}" Header="状态" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+                  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding UploadTime}" Header="时间" />
+                <DataGridTextColumn Binding="{Binding Id}" Header="订单号" />
+                <DataGridTextColumn Binding="{Binding UploadSuccess, Converter={StaticResource UploadSuccessConverter}}" Header="状态">
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
         <StatusBar Grid.Row="2">
-            <StatusBarItem>就绪</StatusBarItem>
-            <Separator Background="Blue" Width="1" Height="15" />
-            <StatusBarItem>Ln 1, Col 1</StatusBarItem>
+            <StatusBarItem FontSize="16">就绪</StatusBarItem>
+            <Separator Background="White" Width="1" Height="15" />
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="正在上传" VerticalAlignment="Center" FontSize="16"/>
+                    <Control:ProgressRing 
+                        Margin="3,0,0,0"
+                    IsActive="True" 
+                    IsLarge="False" 
+                    Width="10"
+                    Height="10" 
+                    Foreground="White"/>
+                </StackPanel>
+            </StatusBarItem>
         </StatusBar>
     </Grid>
 </Control:MetroWindow>
