@@ -1,5 +1,6 @@
-﻿<Control:MetroWindow
-    xmlns:Control="http://metro.mahapps.com/winfx/xaml/controls" x:Class="BingShengReportToBill.MainWindow"
+﻿<Controls:MetroWindow
+    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    x:Class="BingShengReportToBill.MainWindow"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,10 +8,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BingShengReportToBill"
     xmlns:converter="clr-namespace:BingShengReportToBill.Converter"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
         Title="炳胜上报账单" Height="350" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
     DataContext="{Binding Main, Source={StaticResource Locator}}">
-    <Control:MetroWindow.Resources>
+    <Controls:MetroWindow.Resources>
         <Style x:Key="AccentedSquareButtonStyle"
            BasedOn="{StaticResource SquareButtonStyle}"
            TargetType="{x:Type ButtonBase}">
@@ -18,7 +20,15 @@
             <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />
         </Style>
         <converter:UploadSuccessConverter x:Key="UploadSuccessConverter"/>
-    </Control:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Controls:MetroWindow.Resources>
+    <Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Button>
+                <iconPacks:PackIconEntypo Kind="Tools" />
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -29,15 +39,16 @@
             <TextBlock Text="日期:" VerticalAlignment="Center" FontSize="16"/>
             <DatePicker x:Name="uploadDatePciker" Margin="3,0,0,0" Width="120" VerticalContentAlignment="Center" FontFamily="Microsoft JhengHei UI Light"
                         SelectedDate="{x:Static sys:DateTime.Now}"/>
-            <Button Margin="30,0,0,0" 
+            <Button Margin="30,0,0,0"
                     Width="80" 
-                    Content="上  报" 
+                    Content="上报信息" 
                     Cursor="Hand"
                     BorderThickness="0"
                     Style="{DynamicResource AccentedSquareButtonStyle}"
                     FontFamily="Microsoft YaHei UI Light" FontSize="16"
                     Command="{Binding UploadCommand}"
-                    CommandParameter="{Binding ElementName=uploadDatePciker, Path=SelectedDate}">
+                    CommandParameter="{Binding ElementName=uploadDatePciker, Path=SelectedDate}"
+                    IsEnabled="{Binding UploadButtonEnabled}">
             </Button>
         </StackPanel>
         <DataGrid Margin="10" 
@@ -47,7 +58,6 @@
                   AutoGenerateColumns="False"
                   GridLinesVisibility="All"
                   ItemsSource="{Binding Orders, Mode=OneWay}"
-                  SelectedItem="{Binding SelectedOrder, Mode=OneWay}"
                   >
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding UploadTime}" Header="时间" />
@@ -55,22 +65,49 @@
                 <DataGridTextColumn Binding="{Binding UploadSuccess, Converter={StaticResource UploadSuccessConverter}}" Header="状态">
                 </DataGridTextColumn>
             </DataGrid.Columns>
+            <DataGrid.Style>
+                <Style BasedOn="{StaticResource MetroDataGrid}" TargetType="{x:Type DataGrid}">
+                    <Setter Property="AlternatingRowBackground" Value="{DynamicResource GrayBrush10}" />
+                </Style>
+            </DataGrid.Style>
+            <DataGrid.RowStyle>
+                <Style BasedOn="{StaticResource MetroDataGridRow}" TargetType="{x:Type DataGridRow}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UploadSuccess, Mode=OneWay}" Value="False">
+                            <Setter Property="Background" Value="#FF8B8B" />
+                            <Setter Property="Foreground" Value="DarkRed" />
+                        </DataTrigger>
+                        <!--  IsMouseOver  -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Price, Mode=OneWay}" Value="True" />
+                                <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="#FFBDBD" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
-        <StatusBar Grid.Row="2">
-            <StatusBarItem FontSize="16">就绪</StatusBarItem>
-            <Separator Background="White" Width="1" Height="15" />
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="正在上传" VerticalAlignment="Center" FontSize="16"/>
-                    <Control:ProgressRing 
-                        Margin="3,0,0,0"
-                    IsActive="True" 
-                    IsLarge="False" 
-                    Width="10"
-                    Height="10" 
-                    Foreground="White"/>
+        <StatusBar Grid.Row="2" Height="25">
+            <StatusBarItem HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="正在上传" VerticalAlignment="Center" FontSize="14"/>
+                    <Controls:MetroProgressBar 
+                        Margin="10,0,0,0"
+                        Width="280"
+                        IsIndeterminate="True"
+                        Foreground="White"/>
                 </StackPanel>
             </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Visibility="{Binding UploadTipsVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding SuccessfulCount, StringFormat=成功:{0}}" VerticalAlignment="Center" FontSize="14"/>
+                    <TextBlock Text=" | " VerticalAlignment="Center" FontSize="14"/>
+                    <TextBlock Text="{Binding FailuresCount, StringFormat=失败:{0}}" VerticalAlignment="Center" FontSize="14"/>
+                </StackPanel>
+            </StatusBarItem>
+            
         </StatusBar>
     </Grid>
-</Control:MetroWindow>
+</Controls:MetroWindow>
