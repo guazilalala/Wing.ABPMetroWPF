@@ -57,11 +57,14 @@
                   CanUserAddRows="False"
                   AutoGenerateColumns="False"
                   GridLinesVisibility="All"
+                  HeadersVisibility="All"
+                  SelectionUnit="FullRow"
+                  RowHeaderWidth="20"
                   ItemsSource="{Binding Orders, Mode=OneWay}"
                   >
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding UploadTime}" Header="时间" />
-                <DataGridTextColumn Binding="{Binding Id}" Header="订单号" />
+                <DataGridTextColumn Binding="{Binding StartTim,StringFormat='yyyy-MM-dd HH:mm:ss'}" Header="时间" />
+                <DataGridTextColumn Binding="{Binding Serial}" Header="订单号" />
                 <DataGridTextColumn Binding="{Binding UploadSuccess, Converter={StaticResource UploadSuccessConverter}}" Header="状态">
                 </DataGridTextColumn>
             </DataGrid.Columns>
@@ -80,7 +83,7 @@
                         <!--  IsMouseOver  -->
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Price, Mode=OneWay}" Value="True" />
+                                <Condition Binding="{Binding UploadSuccess, Mode=OneWay}" Value="False" />
                                 <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background" Value="#FFBDBD" />

@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight.Threading;
+﻿using AutoMapper;
+using BingShengReportToBill.Model;
+using GalaSoft.MvvmLight.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,6 +20,10 @@ namespace BingShengReportToBill
 		{
 			base.OnStartup(e);
 			DispatcherHelper.Initialize();
+			Mapper.Initialize(cfg => {
+				cfg.CreateMissingTypeMaps = true;
+				cfg.CreateMap<IDataReader, Order>();
+				});
 		}
 	}
 }

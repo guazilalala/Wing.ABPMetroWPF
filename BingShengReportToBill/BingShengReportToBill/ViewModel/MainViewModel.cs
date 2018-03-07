@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls;
+using AutoMapper;
+using System.Data;
 
 namespace BingShengReportToBill.ViewModel
 {
@@ -32,7 +34,7 @@ namespace BingShengReportToBill.ViewModel
 	public class MainViewModel : ViewModelBase
 	{
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-		private readonly AppConfig _appConfig = new AppConfig();
+		private readonly InterBaseHelper _interBaseHelper;
 		private ObservableCollection<Order> _orders;
 		private Order _selectedOrder;
 		/// <summary>
@@ -40,8 +42,8 @@ namespace BingShengReportToBill.ViewModel
 		/// </summary>
 		public MainViewModel()
 		{
+			_interBaseHelper = new InterBaseHelper(AppConfig.DatabaseFile, AppConfig.UserName, AppConfig.Password, AppConfig.ServerName);
 			UploadCommand = new RelayCommand<DateTime>(x => UploadOrder(x));
-
 			UploadButtonEnabled = true;
 			UploadTipsVisibility = false;
 		}
@@ -145,7 +147,7 @@ namespace BingShengReportToBill.ViewModel
 			set
 			{
 				_selectedOrder = value;
-				RaisePropertyChanged(()=>SelectedOrder);
+				RaisePropertyChanged(() => SelectedOrder);
 			}
 		}
 
@@ -156,35 +158,43 @@ namespace BingShengReportToBill.ViewModel
 		{
 			#region 验证配置信息
 			List<ValidationResult> validationResult;
-			var validation = ValidateHelper.ValidateConfig(_appConfig, out validationResult);
+			var validation = ValidateHelper.ValidateConfig(new AppConfig(), out validationResult);
 			if (!validation)
 			{
 				string resultStr = string.Join<ValidationResult>("|", validationResult.ToArray());
 			}
 			#endregion
+			//string tableTime = date.ToString("yyMMdd");
+			string tableTime = date.ToString("180101");
 
-			UploadButtonEnabled = false;
-			UploadTipsVisibility = true;
+			var tenderCodeArray = AppConfig.TenderCode.Split(',');
+			for (int i = 0; i < tenderCodeArray.Length; i++)
+			{
+				tenderCodeArray[i] = "'" + tenderCodeArray[i] + "'";
+			}
+			string tenderCodes = string.Join(",", tenderCodeArray);
+
+			string querySql = "SELECT STARTTIM,SERIAL,AMT FROM FOLIO" + tableTime + " WHERE SERIAL IN(SELECT SERIAL FROM FOLIOPAYMENT" + tableTime + " WHERE PAYMENTDES IN (" + tenderCodes + ") GROUP BY SERIAL)";
+
+			Orders.Clear();
 			SuccessfulCount = 0;
 			FailuresCount = 0;
+			UploadButtonEnabled = false;
+			UploadTipsVisibility = true;
 
-			var uploadDate = date.ToString("yyyy-MM-dd");
+			Task.Factory.StartNew(()=> {
 
-			Task.Factory.StartNew(() =>
-			{
-				for (int i = 0; i < 100; i++)
+				var results = _interBaseHelper.ReadOrderData(querySql);
+				if (results.Count > 0)
 				{
-					DispatcherHelper.CheckBeginInvokeOnUI(() =>
-					{
-						var order = new Order { Id = DateTime.Now.ToString("yyyyMMddHHmmss"), UploadSuccess = true, UploadTime = DateTime.Now };
-						Orders.Add(order);
-						SuccessfulCount++;
-						SelectedOrder = order;
-					});
-					Thread.Sleep(100);
+						foreach (var item in results)
+						{
+							SuccessfulCount++;
+							DispatcherHelper.CheckBeginInvokeOnUI(() => { Orders.Add(item); });
+							Thread.Sleep(50);
+						}			
 				}
-				UploadButtonEnabled = true;
-			});
+			}).ContinueWith(x=> { UploadButtonEnabled = true; });
 		}
 
 		#endregion

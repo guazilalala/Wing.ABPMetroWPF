@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="GetItemMasterInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strCallUserCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strCallPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strItemCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strItemGroup0" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemMasterInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetItemMasterInfoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemMasterInfoByStore">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strCallUserCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strCallPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strStoreCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strItemCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strItemGroup0" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemMasterInfoByStoreResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetItemMasterInfoByStoreResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PostSales">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strCallUserCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strCallPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strStoreCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strSalesDate_YYYYMMDD" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strSalesTime_HHMISS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strSalesDocNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVipCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strTenderCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strRemark" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strItems" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PostSalesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PostSalesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckCallUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strCallUserCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strCallPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckCallUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckCallUserResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetItemMasterInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetItemMasterInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetItemMasterInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreSoapIn">
+    <wsdl:part name="parameters" element="tns:GetItemMasterInfoByStore" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreSoapOut">
+    <wsdl:part name="parameters" element="tns:GetItemMasterInfoByStoreResponse" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesSoapIn">
+    <wsdl:part name="parameters" element="tns:PostSales" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesSoapOut">
+    <wsdl:part name="parameters" element="tns:PostSalesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckCallUser" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckCallUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoHttpGetIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strItemCode" type="s:string" />
+    <wsdl:part name="strItemGroup0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreHttpGetIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strStoreCode" type="s:string" />
+    <wsdl:part name="strItemCode" type="s:string" />
+    <wsdl:part name="strItemGroup0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesHttpGetIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strStoreCode" type="s:string" />
+    <wsdl:part name="strType" type="s:string" />
+    <wsdl:part name="strSalesDate_YYYYMMDD" type="s:string" />
+    <wsdl:part name="strSalesTime_HHMISS" type="s:string" />
+    <wsdl:part name="strSalesDocNo" type="s:string" />
+    <wsdl:part name="strVipCode" type="s:string" />
+    <wsdl:part name="strTenderCode" type="s:string" />
+    <wsdl:part name="strRemark" type="s:string" />
+    <wsdl:part name="strItems" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserHttpGetIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoHttpPostIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strItemCode" type="s:string" />
+    <wsdl:part name="strItemGroup0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreHttpPostIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strStoreCode" type="s:string" />
+    <wsdl:part name="strItemCode" type="s:string" />
+    <wsdl:part name="strItemGroup0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetItemMasterInfoByStoreHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesHttpPostIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+    <wsdl:part name="strStoreCode" type="s:string" />
+    <wsdl:part name="strType" type="s:string" />
+    <wsdl:part name="strSalesDate_YYYYMMDD" type="s:string" />
+    <wsdl:part name="strSalesTime_HHMISS" type="s:string" />
+    <wsdl:part name="strSalesDocNo" type="s:string" />
+    <wsdl:part name="strVipCode" type="s:string" />
+    <wsdl:part name="strTenderCode" type="s:string" />
+    <wsdl:part name="strRemark" type="s:string" />
+    <wsdl:part name="strItems" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PostSalesHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserHttpPostIn">
+    <wsdl:part name="strCallUserCode" type="s:string" />
+    <wsdl:part name="strCallPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckCallUserHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:portType name="posSoap">
+    <wsdl:operation name="GetItemMasterInfo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoSoapIn" />
+      <wsdl:output message="tns:GetItemMasterInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料按库存地</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoByStoreSoapIn" />
+      <wsdl:output message="tns:GetItemMasterInfoByStoreSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*销售上传</wsdl:documentation>
+      <wsdl:input message="tns:PostSalesSoapIn" />
+      <wsdl:output message="tns:PostSalesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*检查Web Service用户，* 传入：用户号和密码， *返回 0：验证通过; -901： 用户不存在; -902： 密码错误; -903： 用户还没生效或已过期.</wsdl:documentation>
+      <wsdl:input message="tns:CheckCallUserSoapIn" />
+      <wsdl:output message="tns:CheckCallUserSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="posHttpGet">
+    <wsdl:operation name="GetItemMasterInfo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoHttpGetIn" />
+      <wsdl:output message="tns:GetItemMasterInfoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料按库存地</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoByStoreHttpGetIn" />
+      <wsdl:output message="tns:GetItemMasterInfoByStoreHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*销售上传</wsdl:documentation>
+      <wsdl:input message="tns:PostSalesHttpGetIn" />
+      <wsdl:output message="tns:PostSalesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*检查Web Service用户，* 传入：用户号和密码， *返回 0：验证通过; -901： 用户不存在; -902： 密码错误; -903： 用户还没生效或已过期.</wsdl:documentation>
+      <wsdl:input message="tns:CheckCallUserHttpGetIn" />
+      <wsdl:output message="tns:CheckCallUserHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="posHttpPost">
+    <wsdl:operation name="GetItemMasterInfo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoHttpPostIn" />
+      <wsdl:output message="tns:GetItemMasterInfoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*获取货品资料按库存地</wsdl:documentation>
+      <wsdl:input message="tns:GetItemMasterInfoByStoreHttpPostIn" />
+      <wsdl:output message="tns:GetItemMasterInfoByStoreHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*销售上传</wsdl:documentation>
+      <wsdl:input message="tns:PostSalesHttpPostIn" />
+      <wsdl:output message="tns:PostSalesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">*检查Web Service用户，* 传入：用户号和密码， *返回 0：验证通过; -901： 用户不存在; -902： 密码错误; -903： 用户还没生效或已过期.</wsdl:documentation>
+      <wsdl:input message="tns:CheckCallUserHttpPostIn" />
+      <wsdl:output message="tns:CheckCallUserHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="posSoap" type="tns:posSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetItemMasterInfo">
+      <soap:operation soapAction="http://tempuri.org/GetItemMasterInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <soap:operation soapAction="http://tempuri.org/GetItemMasterInfoByStore" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <soap:operation soapAction="http://tempuri.org/PostSales" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <soap:operation soapAction="http://tempuri.org/CheckCallUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="posSoap12" type="tns:posSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetItemMasterInfo">
+      <soap12:operation soapAction="http://tempuri.org/GetItemMasterInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <soap12:operation soapAction="http://tempuri.org/GetItemMasterInfoByStore" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <soap12:operation soapAction="http://tempuri.org/PostSales" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <soap12:operation soapAction="http://tempuri.org/CheckCallUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="posHttpGet" type="tns:posHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="GetItemMasterInfo">
+      <http:operation location="/GetItemMasterInfo" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <http:operation location="/GetItemMasterInfoByStore" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <http:operation location="/PostSales" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <http:operation location="/CheckCallUser" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="posHttpPost" type="tns:posHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="GetItemMasterInfo">
+      <http:operation location="/GetItemMasterInfo" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemMasterInfoByStore">
+      <http:operation location="/GetItemMasterInfoByStore" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostSales">
+      <http:operation location="/PostSales" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckCallUser">
+      <http:operation location="/CheckCallUser" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="pos">
+    <wsdl:port name="posSoap" binding="tns:posSoap">
+      <soap:address location="http://119.131.247.18:8010/pos.asmx" />
+    </wsdl:port>
+    <wsdl:port name="posSoap12" binding="tns:posSoap12">
+      <soap12:address location="http://119.131.247.18:8010/pos.asmx" />
+    </wsdl:port>
+    <wsdl:port name="posHttpGet" binding="tns:posHttpGet">
+      <http:address location="http://119.131.247.18:8010/pos.asmx" />
+    </wsdl:port>
+    <wsdl:port name="posHttpPost" binding="tns:posHttpPost">
+      <http:address location="http://119.131.247.18:8010/pos.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
