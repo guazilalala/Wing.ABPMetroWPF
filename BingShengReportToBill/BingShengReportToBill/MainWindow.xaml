@@ -9,17 +9,24 @@
         xmlns:converter="clr-namespace:BingShengReportToBill.Converter"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Height="480" 
-        Width="640"
+        Height="600" 
+        Width="800"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding Main, Source={StaticResource Locator}}" 
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="NoResize">
     <Controls:MetroWindow.Resources>
         <Style x:Key="AccentedSquareButtonStyle"
            BasedOn="{StaticResource SquareButtonStyle}"
            TargetType="{x:Type ButtonBase}">
             <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />
+        </Style>
+        <Style x:Key="CustomMetroToggleSwitch"
+                       BasedOn="{StaticResource MahApps.Metro.Styles.ToggleSwitch}"
+                       TargetType="{x:Type Controls:ToggleSwitch}">
+            <Setter Property="OffLabel" Value="定时上报: 关" />
+            <Setter Property="OnLabel" Value="定时上报: 开" />
+            <Setter Property="SwitchForeground" Value="{DynamicResource AccentColorBrush}" />
         </Style>
         <converter:UploadSuccessConverter x:Key="UploadSuccessConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -33,7 +40,6 @@
         <DataTemplate>
             <iconPacks:PackIconEntypo Width="{TemplateBinding Width}"
                                       Height="{TemplateBinding Height}"
-  
                                       Padding="7"
                                       Foreground="{DynamicResource IdealForegroundColorBrush}"
                                       Kind="Tools" />
@@ -41,8 +47,8 @@
     </Controls:MetroWindow.IconTemplate>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button>
-                <iconPacks:PackIconEntypo Kind="Tools" />
+            <Button x:Name="btnLink" Click="btnLink_Click">
+                <iconPacks:PackIconEntypo Kind="Home" />
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
@@ -52,12 +58,12 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBlock Text="日期:" VerticalAlignment="Center" FontSize="16"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,10,10,0">
+            <TextBlock Text="日期:" VerticalAlignment="Center" FontSize="16" FontFamily="Microsoft YaHei UI Light" />
             <DatePicker x:Name="uploadDatePciker" Margin="3,0,0,0" Width="120" VerticalContentAlignment="Center" FontFamily="Microsoft JhengHei UI Light"
                         SelectedDate="{x:Static sys:DateTime.Now}"/>
-            <Button Margin="30,0,0,0"
-                    Width="80" 
+            <Button x:Name="btnUpload" Margin="30,0,0,0"
+                    Width="90" 
                     Content="上报数据" 
                     Cursor="Hand"
                     BorderThickness="0"
@@ -65,8 +71,20 @@
                     FontFamily="Microsoft YaHei UI Light" FontSize="16"
                     Command="{Binding UploadCommand}"
                     CommandParameter="{Binding ElementName=uploadDatePciker, Path=SelectedDate}"
-                    IsEnabled="{Binding UploadButtonEnabled}">
+                    IsEnabled="{Binding UploadButtonEnabled, Mode=TwoWay}">
             </Button>
+            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="74,0,74,0" Stroke="LightGray" />
+            <Controls:ToggleSwitch x:Name="timingUpload"  IsChecked="{Binding IsTimingUpload}"                      
+                                   Style="{DynamicResource CustomMetroToggleSwitch}" 
+                                   FontSize="16" 
+                                   FontFamily="Microsoft YaHei UI Light" >
+            </Controls:ToggleSwitch>
+            <TextBlock Text="每天:" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="16" FontFamily="Microsoft YaHei UI Light"/>
+            <Controls:TimePicker Margin="3,0,0,0"
+                                 Controls:TextBoxHelper.Watermark="选择时间" 
+                                 SelectedTimeFormat="Short"
+                                 Culture=""
+                                 SelectedTime="{Binding TimingUploadTime}"/>
         </StackPanel>
         <DataGrid Margin="10" 
                   BorderBrush="LightGray"
@@ -113,26 +131,25 @@
             </DataGrid.RowStyle>
         </DataGrid>
         <StatusBar Grid.Row="2" Height="25">
-            <StatusBarItem HorizontalAlignment="Left">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="正在上传" VerticalAlignment="Center" FontSize="14"/>
+            <StatusBarItem Content="Version 1.0.18.0308"></StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding UploadTipsVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="正在上传" VerticalAlignment="Center" FontSize="14" Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Controls:ProgressRing 
                         Margin="10,0,0,0"
                         Width="10"
                         Height="10"
                         IsActive="True"
                         IsLarge="False"
-                        Foreground="White"/>
-                </StackPanel>
-            </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right" Margin="0,0,16,0">
-                <StackPanel Orientation="Horizontal" Visibility="{Binding UploadTipsVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
+                        Foreground="White"
+                        Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock Text="|" VerticalAlignment="Center" FontSize="14" Margin="10,0,10,0"/>
                     <TextBlock Text="{Binding SuccessfulCount, StringFormat=成功:{0}}" VerticalAlignment="Center" FontSize="14"/>
-                    <TextBlock Text=" | " VerticalAlignment="Center" FontSize="14"/>
+                    <TextBlock Text="|" VerticalAlignment="Center" FontSize="14" Margin="10,0,10,0"/>
                     <TextBlock Text="{Binding FailuresCount, StringFormat=失败:{0}}" VerticalAlignment="Center" FontSize="14"/>
                 </StackPanel>
             </StatusBarItem>
-            
         </StatusBar>
     </Grid>
 </Controls:MetroWindow>

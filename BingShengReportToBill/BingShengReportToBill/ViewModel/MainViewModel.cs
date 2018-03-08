@@ -23,6 +23,8 @@ namespace BingShengReportToBill.ViewModel
 		private bool _processingEnabled;
 		private bool _uploadTipsVisibility;
 		private bool _uploadButtonEnabled;
+		private bool _isTimingUpload;
+		private string _timingUploadTime;
 
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
@@ -33,9 +35,43 @@ namespace BingShengReportToBill.ViewModel
 			UploadCommand = new RelayCommand<DateTime>(x => UploadOrder(x));
 			UploadButtonEnabled = true;
 			UploadTipsVisibility = false;
+
+			IsTimingUpload = AppConfig.IsTimingUpload;
+			TimingUploadTime = AppConfig.TimingUploadTime;
 		}
 
 		#region Properties
+		/// <summary>
+		/// 是否定时上报
+		/// </summary>
+		public bool IsTimingUpload
+		{
+			get
+			{
+				return _isTimingUpload;
+			}
+
+			set
+			{
+				_isTimingUpload = value;
+				RaisePropertyChanged(() => IsTimingUpload);
+			}
+		}
+
+		public string TimingUploadTime
+		{
+			get
+			{
+				return _timingUploadTime;
+			}
+
+			set
+			{
+				_timingUploadTime = value;
+				RaisePropertyChanged(() => TimingUploadTime);
+			}
+		}
+
 		/// <summary>
 		/// 上传成功的订单数量
 		/// </summary>

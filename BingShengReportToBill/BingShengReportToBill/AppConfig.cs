@@ -26,6 +26,12 @@ namespace BingShengReportToBill
 			PayCardNum = ConfigurationManager.AppSettings.Get("PayCardNum");
 			PayCard = ConfigurationManager.AppSettings.Get("PayCard");
 
+			bool convertToBool;
+			Boolean.TryParse(ConfigurationManager.AppSettings.Get("IsTimingUpload"),out convertToBool);
+			IsTimingUpload = convertToBool;
+
+			TimingUploadTime = ConfigurationManager.AppSettings.Get("TimingUploadTime");
+
 			var payCashDic = PayCash.Split(',').ToDictionaryEx(key => key, value => PayCashNum);
 			var payCardDic = PayCard.Split(',').ToDictionaryEx(key => key, value => PayCardNum);
 
@@ -112,6 +118,10 @@ namespace BingShengReportToBill
 		/// </summary>
 		[Required]
 		public static Dictionary<string, string> PayDictionary { get ; private set; }
+
+		public static bool IsTimingUpload { get; set; }
+		public static string TimingUploadTime { get; set; }
+
 
 	}
 }

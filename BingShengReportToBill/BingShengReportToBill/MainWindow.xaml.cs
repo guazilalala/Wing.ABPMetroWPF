@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,11 @@ namespace BingShengReportToBill
 		private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
 		{
 			e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+		}
+
+		private void btnLink_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("Http://www.kuan1.cn");
 		}
 	}
 }
