@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace BingShengReportToBill.Model
 {
-    public class Order
+	public class Folio
     {
 		/// <summary>
 		/// 订单号

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
+using BingShengReportToBill.Extentions;
 
 namespace BingShengReportToBill
 {
@@ -15,8 +16,8 @@ namespace BingShengReportToBill
 			DatabaseFile = ConfigurationManager.AppSettings.Get("DatabaseFile");
 			UserName = ConfigurationManager.AppSettings.Get("UserName");
 			Password = ConfigurationManager.AppSettings.Get("Password");
-			ApiUserCode = ConfigurationManager.AppSettings.Get("ApiUserCode");
-			ApiPassword = ConfigurationManager.AppSettings.Get("ApiPassword");
+			CallUserCode = ConfigurationManager.AppSettings.Get("CallUserCode");
+			CallPassword = ConfigurationManager.AppSettings.Get("CallPassword");
 			StoreCode = ConfigurationManager.AppSettings.Get("StoreCode");
 			TenderCode = ConfigurationManager.AppSettings.Get("TenderCode");
 			SKU = ConfigurationManager.AppSettings.Get("SKU");
@@ -24,6 +25,20 @@ namespace BingShengReportToBill
 			PayCash = ConfigurationManager.AppSettings.Get("PayCash");
 			PayCardNum = ConfigurationManager.AppSettings.Get("PayCardNum");
 			PayCard = ConfigurationManager.AppSettings.Get("PayCard");
+
+			var payCashDic = PayCash.Split(',').ToDictionaryEx(key => key, value => PayCashNum);
+			var payCardDic = PayCard.Split(',').ToDictionaryEx(key => key, value => PayCardNum);
+
+			PayDictionary = new Dictionary<string, string>();
+			payCashDic.ToList().ForEach(x => 
+			{
+				if (!PayDictionary.ContainsKey(x.Key))
+					PayDictionary.Add(x.Key, x.Value);
+			} );
+			payCardDic.ToList().ForEach(x => {
+				if (!PayDictionary.ContainsKey(x.Key))
+					PayDictionary.Add(x.Key, x.Value);
+			});
 		}
 
 		/// <summary>
@@ -50,12 +65,12 @@ namespace BingShengReportToBill
 		/// 使用者用户名
 		/// </summary>
 		[Required]
-		public static string ApiUserCode { get; private set; }
+		public static string CallUserCode { get; private set; }
 		/// <summary>
 		/// 使用者密码
 		/// </summary>
 		[Required]
-		public static string ApiPassword { get; private set; }
+		public static string CallPassword { get; private set; }
 		/// <summary>
 		/// 店铺号
 		/// </summary>
@@ -91,6 +106,12 @@ namespace BingShengReportToBill
 		/// </summary>
 		[Required]
 		public static string PayCard { get; private set; }
+
+		/// <summary>
+		/// 支付方式对应接口支付编码的字典
+		/// </summary>
+		[Required]
+		public static Dictionary<string, string> PayDictionary { get ; private set; }
 
 	}
 }

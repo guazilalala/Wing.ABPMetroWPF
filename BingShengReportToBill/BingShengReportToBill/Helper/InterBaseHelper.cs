@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BingShengReportToBill.Model;
+﻿using BingShengReportToBill.Model;
 using Borland.Data;
 using NLog;
 using System;
@@ -145,33 +144,108 @@ namespace BingShengReportToBill.Helper
 			}
 		}
 
-		public List<Order> ReadOrderData(string queryString)
+		public List<Folio> ReadFolioData(string queryString)
 		{
-			List<Order> orders = new List<Order>();
-			using (TAdoDbxConnection connection = new TAdoDbxConnection(_connectionString))
+			List<Folio> folios = new List<Folio>();
+			try
 			{
-				using (TAdoDbxCommand cmd = new TAdoDbxCommand())
+				using (TAdoDbxConnection connection = new TAdoDbxConnection(_connectionString))
 				{
-					cmd.Connection = connection;
-					cmd.CommandText = queryString;
-					cmd.Connection.Open();
-					
-					using (var reader = cmd.ExecuteReader())
+					using (TAdoDbxCommand cmd = new TAdoDbxCommand())
 					{
-						while (reader.Read())
+						cmd.Connection = connection;
+						cmd.CommandText = queryString;
+						cmd.Connection.Open();
+
+						using (var reader = cmd.ExecuteReader())
 						{
-							orders.Add(new Order
+							while (reader.Read())
 							{
-								Serial = reader["SERIAL"].ToString(),
-								StartTim = Convert.ToDateTime(reader["STARTTIM"]), 
-								Amt = reader["AMT"].ToString(),
-								UploadSuccess = true
-							});
+								folios.Add(new Folio
+								{
+									Serial = reader["SERIAL"].ToString(),
+									StartTim = Convert.ToDateTime(reader["STARTTIM"]),
+									Amt = reader["AMT"].ToString(),
+									UploadSuccess = true
+								});
+							}
 						}
-						return orders;
 					}
 				}
+
 			}
+			catch (Exception)
+			{
+			}
+			return folios;
+		}
+
+		public List<FolioPayment> ReadFolioPaymentData(string queryString)
+		{
+			List<FolioPayment> folioPayments = new List<FolioPayment>();
+			try
+			{
+				using (TAdoDbxConnection connection = new TAdoDbxConnection(_connectionString))
+				{
+					using (TAdoDbxCommand cmd = new TAdoDbxCommand())
+					{
+						cmd.Connection = connection;
+						cmd.CommandText = queryString;
+						cmd.Connection.Open();
+
+						using (var reader = cmd.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								folioPayments.Add(new FolioPayment
+								{
+									PaymentDes = reader["PAYMENTDES"].ToString(),
+									Amt = Convert.ToDouble(reader["AMT"])
+								});
+							}
+						}
+					}
+				}
+
+			}
+			catch (Exception)
+			{
+			}
+			return folioPayments;
+		}
+		public List<Ordr> ReadOrdrData(string queryString)
+		{
+			List<Ordr> ordrs = new List<Ordr>();
+			try
+			{
+				using (TAdoDbxConnection connection = new TAdoDbxConnection(_connectionString))
+				{
+					using (TAdoDbxCommand cmd = new TAdoDbxCommand())
+					{
+						cmd.Connection = connection;
+						cmd.CommandText = queryString;
+						cmd.Connection.Open();
+
+						using (var reader = cmd.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								ordrs.Add(new Ordr
+								{
+									Cnt = Convert.ToInt32(reader["CNT"]),
+									Amt = Convert.ToDouble(reader["AMT"]),
+									Disc = Convert.ToDouble(reader["DISC"]),
+								});
+							}
+						}
+					}
+				}
+
+			}
+			catch (Exception)
+			{
+			}
+			return ordrs;
 		}
 
 		/// <summary>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="5ada6b3c-f4d7-42da-9108-38ad85a607ec" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="7a6fca26-08c0-4eb5-81b1-9255e6951ba8" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -21,8 +21,8 @@
     <MetadataSource Address="http://119.131.247.18:8010/pos.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="pos.disco" MetadataType="Disco" ID="18ec4191-b30b-4166-a63f-a2077579977b" SourceId="1" SourceUrl="http://119.131.247.18:8010/pos.asmx?disco" />
-    <MetadataFile FileName="pos.wsdl" MetadataType="Wsdl" ID="bb8a9082-cdfb-49a7-8d20-6bf9cbbda8f3" SourceId="1" SourceUrl="http://119.131.247.18:8010/pos.asmx?wsdl" />
+    <MetadataFile FileName="pos.disco" MetadataType="Disco" ID="e8037b7f-84ba-4d2a-bf5d-28fe4883b1ba" SourceId="1" SourceUrl="http://119.131.247.18:8010/pos.asmx?disco" />
+    <MetadataFile FileName="pos.wsdl" MetadataType="Wsdl" ID="5657d6be-9642-4868-8906-3e77fd224c3c" SourceId="1" SourceUrl="http://119.131.247.18:8010/pos.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
