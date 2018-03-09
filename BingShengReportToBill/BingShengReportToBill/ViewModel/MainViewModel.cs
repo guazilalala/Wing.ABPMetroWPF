@@ -2,12 +2,16 @@ using BingShengReportToBill.Helper;
 using BingShengReportToBill.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using GalaSoft.MvvmLight.Views;
+using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +21,7 @@ namespace BingShengReportToBill.ViewModel
 	{
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 		private readonly InterBaseHelper _interBaseHelper;
+		private readonly IDialogCoordinator _dialogCoordinator;
 		private ObservableCollection<Folio> _folios;
 		private int _successfulCount;
 		private int _failuresCount;
@@ -25,22 +30,42 @@ namespace BingShengReportToBill.ViewModel
 		private bool _uploadButtonEnabled;
 		private bool _isTimingUpload;
 		private string _timingUploadTime;
-
+		private DateTime _selectedUpoladDate;
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel()
+		public MainViewModel(IDialogCoordinator dialogCoordinator)
 		{
+			_dialogCoordinator = dialogCoordinator;
 			_interBaseHelper = new InterBaseHelper(AppConfig.DatabaseFile, AppConfig.UserName, AppConfig.Password, AppConfig.ServerName);
-			UploadCommand = new RelayCommand<DateTime>(x => UploadOrder(x));
+			UploadCommand = new RelayCommand<DateTime>(x => UploadFolioMethod(x));
 			UploadButtonEnabled = true;
 			UploadTipsVisibility = false;
 
+			SelectedUpoladDate = DateTime.Now;
 			IsTimingUpload = AppConfig.IsTimingUpload;
 			TimingUploadTime = AppConfig.TimingUploadTime;
 		}
 
+	
+
 		#region Properties
+		/// <summary>
+		/// 上报账单日期
+		/// </summary>
+		public DateTime SelectedUpoladDate
+		{
+			get
+			{
+				return _selectedUpoladDate;
+			}
+
+			set
+			{
+				_selectedUpoladDate = value;
+				RaisePropertyChanged(() => SelectedUpoladDate);
+			}
+		}
 		/// <summary>
 		/// 是否定时上报
 		/// </summary>
@@ -54,6 +79,33 @@ namespace BingShengReportToBill.ViewModel
 			set
 			{
 				_isTimingUpload = value;
+				try
+				{
+					var cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+					cfa.AppSettings.Settings["IsTimingUpload"].Value = _isTimingUpload.ToString();
+					cfa.Save(ConfigurationSaveMode.Modified);
+					ConfigurationManager.RefreshSection("appSettings");
+
+					Task.Factory.StartNew(() =>
+					{
+						while (_isTimingUpload)
+						{
+							var dateTimeNow = DateTime.Now.ToString("HH:mm");
+							var timingTime = Convert.ToDateTime(TimingUploadTime).ToString("HH:mm");
+							if (dateTimeNow == timingTime)
+							{
+								UploadButtonEnabled = false;
+								UploadFolio(SelectedUpoladDate);
+								Thread.Sleep(1000 * 61);
+							}
+							Thread.Sleep(1000);
+						}
+					});
+				}
+				catch (Exception ex)
+				{
+					_logger.Error(ex);
+				}
 				RaisePropertyChanged(() => IsTimingUpload);
 			}
 		}
@@ -68,6 +120,17 @@ namespace BingShengReportToBill.ViewModel
 			set
 			{
 				_timingUploadTime = value;
+				try
+				{
+					var cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+					cfa.AppSettings.Settings["TimingUploadTime"].Value = Convert.ToDateTime(_timingUploadTime).ToString("HH:mm");
+					cfa.Save(ConfigurationSaveMode.Modified);
+					ConfigurationManager.RefreshSection("appSettings");
+				}
+				catch (Exception ex)
+				{
+					_logger.Error(ex);
+				}
 				RaisePropertyChanged(() => TimingUploadTime);
 			}
 		}
@@ -168,19 +231,11 @@ namespace BingShengReportToBill.ViewModel
 		/// <summary>
 		/// 上报订单,
 		/// </summary>
-		/// <param name="date">上报日期</param>
-		private void UploadOrder(DateTime date)
+		/// <param name="uploadDate">上报日期</param>
+		private void UploadFolio(DateTime uploadDate)
 		{
-			#region 验证配置信息
-			List<ValidationResult> validationResult;
-			var validation = ValidateHelper.ValidateConfig(new AppConfig(), out validationResult);
-			if (!validation)
-			{
-				string resultStr = string.Join<ValidationResult>("|", validationResult.ToArray());
-			}
-			#endregion
 			//string tableTime = date.ToString("yyMMdd");
-			string tableDate = date.ToString("180101");
+			string tableDate = uploadDate.ToString("180101");
 
 			var tenderCodeArray = AppConfig.TenderCode.Split(',');
 			for (int i = 0; i < tenderCodeArray.Length; i++)
@@ -189,8 +244,11 @@ namespace BingShengReportToBill.ViewModel
 			}
 			string tenderCodes = string.Join(",", tenderCodeArray);
 
+			DispatcherHelper.CheckBeginInvokeOnUI(() => 
+			{
+				Folios.Clear();
+			});	
 
-			Folios.Clear();
 			SuccessfulCount = 0;
 			FailuresCount = 0;
 			UploadButtonEnabled = false;
@@ -253,6 +311,49 @@ namespace BingShengReportToBill.ViewModel
 		}
 
 		/// <summary>
+		/// 验证程序配置
+		/// </summary>
+		/// <returns></returns>
+	    private bool ValidationConfign(out string resultStr)
+		{
+			#region 验证配置信息
+			List<ValidationResult> validationResult;
+			var validation = ValidateHelper.ValidateConfig(new AppConfig(), out validationResult);
+			if (!validation)
+			{
+				resultStr = string.Join<ValidationResult>("|", validationResult.ToArray());
+			}
+			resultStr = string.Empty;
+			return validation;
+			#endregion
+		}
+
+		/// <summary>
+		/// 手动上传
+		/// </summary>
+		/// <param name="x"></param>
+		private async void UploadFolioMethod(DateTime uploadDate)
+		{
+
+			string validationResult;
+			if (ValidationConfign(out validationResult))
+			{
+				validationResult = "1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3";
+				Messenger.Default.Send(validationResult, "ShowErrorMessage");
+			}
+
+
+			//if (IsTimingUpload)
+			//{
+			//	var dialog = await _dialogCoordinator.ShowMessageAsync(this, "提示", "请先闭定时上报.");
+			//}
+			//else
+			//{
+			//	UploadFolio(uploadDate);
+			//}
+		}
+
+		/// <summary>
 		/// 上报订单数据到物业
 		/// </summary>
 		/// <param name="strCallUserCode"></param>
@@ -311,7 +412,7 @@ namespace BingShengReportToBill.ViewModel
 			int excessAmount = 0;
 			foreach (var item in queryFolioPaymentResult)
 			{
-				string payNum = "11";
+				string payNum = AppConfig.DefaultPayNum;
 
 				if (AppConfig.PayDictionary.ContainsKey(item.PaymentDes))
 				{

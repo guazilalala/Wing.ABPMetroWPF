@@ -25,13 +25,17 @@ namespace BingShengReportToBill
 			PayCash = ConfigurationManager.AppSettings.Get("PayCash");
 			PayCardNum = ConfigurationManager.AppSettings.Get("PayCardNum");
 			PayCard = ConfigurationManager.AppSettings.Get("PayCard");
+			DefaultPayNum = ConfigurationManager.AppSettings.Get("DefaultPayNum");
 
 			bool convertToBool;
 			Boolean.TryParse(ConfigurationManager.AppSettings.Get("IsTimingUpload"),out convertToBool);
 			IsTimingUpload = convertToBool;
 
 			TimingUploadTime = ConfigurationManager.AppSettings.Get("TimingUploadTime");
-
+			DateTime tempTimingUploadTime;
+			if (!DateTime.TryParse(TimingUploadTime, out tempTimingUploadTime))
+				TimingUploadTime = "23:59";
+			
 			var payCashDic = PayCash.Split(',').ToDictionaryEx(key => key, value => PayCashNum);
 			var payCardDic = PayCard.Split(',').ToDictionaryEx(key => key, value => PayCardNum);
 
@@ -119,9 +123,19 @@ namespace BingShengReportToBill
 		[Required]
 		public static Dictionary<string, string> PayDictionary { get ; private set; }
 
+		/// <summary>
+		/// 是否定时上报
+		/// </summary>
 		public static bool IsTimingUpload { get; set; }
+		/// <summary>
+		/// 定时上报时间
+		/// </summary>
 		public static string TimingUploadTime { get; set; }
 
-
+		/// <summary>
+		/// 默认的支付方式编码
+		/// </summary>
+		[Required]
+		public static string DefaultPayNum { get; set; }
 	}
 }

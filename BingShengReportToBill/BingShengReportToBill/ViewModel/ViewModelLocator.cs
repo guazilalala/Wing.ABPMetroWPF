@@ -12,9 +12,12 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using BingShengReportToBill.Common;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Views;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace BingShengReportToBill.ViewModel
 {
@@ -43,7 +46,8 @@ namespace BingShengReportToBill.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
-        }
+			SimpleIoc.Default.Register<IDialogCoordinator, DialogCoordinator>();
+		}
 
         public MainViewModel Main
         {
