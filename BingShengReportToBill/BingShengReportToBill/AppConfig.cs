@@ -1,16 +1,17 @@
-﻿using System;
+﻿using BingShengReportToBill.Extentions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
-using BingShengReportToBill.Extentions;
+using System.Linq;
 
 namespace BingShengReportToBill
 {
-	public class AppConfig
+	public sealed class AppConfig
 	{
-		static AppConfig()
+		private static AppConfig _instance = null;
+		private static readonly object padLock = new object();
+		private AppConfig()
 		{
 			ServerName = ConfigurationManager.AppSettings.Get("ServerName");
 			DatabaseFile = ConfigurationManager.AppSettings.Get("DatabaseFile");
@@ -51,91 +52,105 @@ namespace BingShengReportToBill
 			});
 		}
 
+		public static AppConfig Instance
+		{
+			get
+			{
+				lock (padLock)
+				{
+					if (_instance == null)
+					{
+						return new AppConfig();
+					}
+				}
+				return _instance;
+			}
+		}
 		/// <summary>
 		/// 数据库IP地址
 		/// </summary>
 		[Required]
-		public static string ServerName { get; private set; }
+		public string ServerName { get; private set; }
 		/// <summary>
 		/// 数据库路径
 		/// </summary>
 		[Required]
-		public static string DatabaseFile { get; private set; }
+		public string DatabaseFile { get; private set; }
 		/// <summary>
 		/// 数据库登录名
 		/// </summary>
 		[Required]
-		public static string UserName { get; private set; }
+		public string UserName { get; private set; }
 		/// <summary>
 		/// 数据库登录密码
 		/// </summary>
 		[Required]
-		public static string Password { get; private set; }
+		public string Password { get; private set; }
 		/// <summary>
 		/// 使用者用户名
 		/// </summary>
 		[Required]
-		public static string CallUserCode { get; private set; }
+		public string CallUserCode { get; private set; }
 		/// <summary>
 		/// 使用者密码
 		/// </summary>
 		[Required]
-		public static string CallPassword { get; private set; }
+		public string CallPassword { get; private set; }
 		/// <summary>
 		/// 店铺号
 		/// </summary>
 		[Required]
-		public static string StoreCode { get; private set; }
+		public string StoreCode { get; private set; }
 		/// <summary>
 		/// 所要的支付方式(字符串)
 		/// </summary>
 		[Required]
-		public static string TenderCode { get; private set; }
+		public string TenderCode { get; private set; }
 		/// <summary>
 		/// 货号
 		/// </summary>
 		[Required]
-		public static string SKU { get; private set; }
+		public string SKU { get; private set; }
 		/// <summary>
 		/// 现金支付:上传到11
 		/// </summary>
 		[Required]
-		public static string PayCashNum { get; private set; }
+		public string PayCashNum { get; private set; }
 		/// <summary>
 		/// 现金支付下的支付方式
 		/// </summary>
 		[Required]
-		public static string PayCash { get; private set; }
+		public string PayCash { get; private set; }
 		/// <summary>
 		/// 国内卡支付：上传到12
 		/// </summary>
 		[Required]
-		public static string PayCardNum { get; private set; }
+		public string PayCardNum { get; private set; }
 		/// <summary>
 		/// 国内卡支付下的支付方式
 		/// </summary>
 		[Required]
-		public static string PayCard { get; private set; }
+		public string PayCard { get; private set; }
 
 		/// <summary>
 		/// 支付方式对应接口支付编码的字典
 		/// </summary>
 		[Required]
-		public static Dictionary<string, string> PayDictionary { get ; private set; }
+		public Dictionary<string, string> PayDictionary { get ; private set; }
 
 		/// <summary>
 		/// 是否定时上报
 		/// </summary>
-		public static bool IsTimingUpload { get; set; }
+		public bool IsTimingUpload { get; set; }
 		/// <summary>
 		/// 定时上报时间
 		/// </summary>
-		public static string TimingUploadTime { get; set; }
+		public string TimingUploadTime { get; set; }
 
 		/// <summary>
 		/// 默认的支付方式编码
 		/// </summary>
 		[Required]
-		public static string DefaultPayNum { get; set; }
+		public string DefaultPayNum { get; set; }
 	}
 }

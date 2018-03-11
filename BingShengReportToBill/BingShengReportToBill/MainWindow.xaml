@@ -1,5 +1,5 @@
 ﻿<Controls:MetroWindow
-        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" x:Name="load"
         x:Class="BingShengReportToBill.MainWindow"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         Dialog:DialogParticipation.Register="{Binding}"
@@ -18,7 +18,7 @@
         ResizeMode="NoResize"
         BorderThickness="0" 
         WindowTransitionsEnabled="False"
-        GlowBrush="{DynamicResource AccentColorBrush}">
+        GlowBrush="{DynamicResource AccentColorBrush}" Loaded="load_Loaded">
     <Controls:MetroWindow.Resources>
         <Style x:Key="AccentedSquareButtonStyle"
            BasedOn="{StaticResource SquareButtonStyle}"
@@ -139,7 +139,7 @@
         <StatusBar Grid.Row="2" Height="25">
             <StatusBarItem Content="Version 1.0.18.0308"></StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal"
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0"
                             Visibility="{Binding UploadTipsVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="正在处理" VerticalAlignment="Center" FontSize="14" Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Controls:ProgressRing 

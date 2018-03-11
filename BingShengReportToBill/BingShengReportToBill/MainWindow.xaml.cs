@@ -1,10 +1,11 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using BingShengReportToBill.ViewModel;
+using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-
+using System;
 namespace BingShengReportToBill
 {
 	/// <summary>
@@ -16,9 +17,23 @@ namespace BingShengReportToBill
 		{
 			InitializeComponent();
 
-			Messenger.Default.Register<string>(this, "ShowErrorMessage", x => 
+			Messenger.Default.Register<string>(this, "ShowErrorMessage", x =>
 			{
-				this.ShowMessageAsync("提示", x, MessageDialogStyle.Affirmative);
+				var msgSettings = new MetroDialogSettings
+				{
+					AffirmativeButtonText = "确定",
+					MaximumBodyHeight = 120			
+				};
+
+				this.ShowMessageAsync("提示", x, MessageDialogStyle.Affirmative, msgSettings).ContinueWith(t =>
+				{
+
+					if (t.Result == MessageDialogResult.Affirmative)
+					{
+						Environment.Exit(0);
+					}
+				}
+				);
 			});
 		}
 
@@ -30,6 +45,12 @@ namespace BingShengReportToBill
 		private void btnLink_Click(object sender, RoutedEventArgs e)
 		{
 			Process.Start("Http://www.kuan1.cn");
+		}
+
+		private void load_Loaded(object sender, RoutedEventArgs e)
+		{
+			var viewModel = this.DataContext as MainViewModel;
+			viewModel.ValidationConfign();
 		}
 	}
 }

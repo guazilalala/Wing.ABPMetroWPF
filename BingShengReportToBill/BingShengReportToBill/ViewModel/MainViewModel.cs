@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
-using GalaSoft.MvvmLight.Views;
 using MahApps.Metro.Controls.Dialogs;
 using NLog;
 using System;
@@ -14,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace BingShengReportToBill.ViewModel
 {
@@ -21,6 +21,7 @@ namespace BingShengReportToBill.ViewModel
 	{
 		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 		private readonly InterBaseHelper _interBaseHelper;
+		private UploadService.posSoapClient _posSoapClient;
 		private readonly IDialogCoordinator _dialogCoordinator;
 		private ObservableCollection<Folio> _folios;
 		private int _successfulCount;
@@ -31,23 +32,23 @@ namespace BingShengReportToBill.ViewModel
 		private bool _isTimingUpload;
 		private string _timingUploadTime;
 		private DateTime _selectedUpoladDate;
+
+
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
 		public MainViewModel(IDialogCoordinator dialogCoordinator)
 		{
 			_dialogCoordinator = dialogCoordinator;
-			_interBaseHelper = new InterBaseHelper(AppConfig.DatabaseFile, AppConfig.UserName, AppConfig.Password, AppConfig.ServerName);
+			_interBaseHelper = new InterBaseHelper(AppConfig.Instance.DatabaseFile, AppConfig.Instance.UserName, AppConfig.Instance.Password, AppConfig.Instance.ServerName);
 			UploadCommand = new RelayCommand<DateTime>(x => UploadFolioMethod(x));
 			UploadButtonEnabled = true;
 			UploadTipsVisibility = false;
 
 			SelectedUpoladDate = DateTime.Now;
-			IsTimingUpload = AppConfig.IsTimingUpload;
-			TimingUploadTime = AppConfig.TimingUploadTime;
+			IsTimingUpload = AppConfig.Instance.IsTimingUpload;
+			TimingUploadTime = AppConfig.Instance.TimingUploadTime;
 		}
-
-	
 
 		#region Properties
 		/// <summary>
@@ -234,98 +235,111 @@ namespace BingShengReportToBill.ViewModel
 		/// <param name="uploadDate">上报日期</param>
 		private void UploadFolio(DateTime uploadDate)
 		{
-			//string tableTime = date.ToString("yyMMdd");
-			string tableDate = uploadDate.ToString("180101");
 
-			var tenderCodeArray = AppConfig.TenderCode.Split(',');
-			for (int i = 0; i < tenderCodeArray.Length; i++)
+			try
 			{
-				tenderCodeArray[i] = "'" + tenderCodeArray[i] + "'";
-			}
-			string tenderCodes = string.Join(",", tenderCodeArray);
+				_posSoapClient = new UploadService.posSoapClient();
+				//string tableTime = date.ToString("yyMMdd");
+				string tableDate = uploadDate.ToString("180101");
 
-			DispatcherHelper.CheckBeginInvokeOnUI(() => 
-			{
-				Folios.Clear();
-			});	
 
-			SuccessfulCount = 0;
-			FailuresCount = 0;
-			UploadButtonEnabled = false;
-			UploadTipsVisibility = true;
-
-			Task.Factory.StartNew(() =>
-			{
-				string queryFolioSql = "SELECT STARTTIM,SERIAL,AMT FROM FOLIO" + tableDate + " WHERE SERIAL IN(SELECT SERIAL FROM FOLIOPAYMENT" + tableDate + " WHERE PAYMENTDES IN (" + tenderCodes + ") GROUP BY SERIAL)";
-				var folios = _interBaseHelper.ReadFolioData(queryFolioSql);
-				foreach (var folio in folios)
+				var tenderCodeArray = AppConfig.Instance.TenderCode.Split(',');
+				for (int i = 0; i < tenderCodeArray.Length; i++)
 				{
-					string strCallUserCode = AppConfig.CallUserCode;
-					string strCallPassword = AppConfig.CallPassword;
-					string strStoreCode = AppConfig.StoreCode;
-					string strType = "SA";
-					string strSalesDate = folio.StartTim.ToString("yyyyMMdd");
-					string strSalesTime = folio.StartTim.ToString("HHMMSS"); ;
-					string strSalesDocNo = folio.Serial;
-					string strVipCode = "";
-					string strTenderCode = GetStrTenderCodes(tableDate, folio.Serial);
-					string strRemark = "";
-					string strItems = GetStrItems(tableDate, folio.Serial);
-
-					var posResult = PostToServer(strCallUserCode,
-							strCallPassword,
-							strStoreCode,
-							strType,
-							strSalesDate,
-							strSalesTime,
-							strSalesDocNo,
-							strVipCode,
-							strTenderCode,
-							strRemark,
-							strItems);
-
-
-					DispatcherHelper.CheckBeginInvokeOnUI(() =>
-					{
-						Folios.Add(new Folio
-						{
-							Serial = folio.Serial,
-							Amt = folio.Amt,
-							StartTim = folio.StartTim,
-							UploadSuccess = posResult
-						});
-					});
-
-
-					if (posResult)
-					{
-						SuccessfulCount++;
-					}
-					else
-					{
-						FailuresCount++;
-					}
+					tenderCodeArray[i] = "'" + tenderCodeArray[i] + "'";
 				}
+				string tenderCodes = string.Join(",", tenderCodeArray);
 
-			}).ContinueWith(x => { UploadButtonEnabled = true; });
+				DispatcherHelper.CheckBeginInvokeOnUI(() =>
+				{
+					Folios.Clear();
+				});
+
+				SuccessfulCount = 0;
+				FailuresCount = 0;
+				UploadButtonEnabled = false;
+				UploadTipsVisibility = true;
+
+				Task.Factory.StartNew(() =>
+				{
+					string queryFolioSql = "SELECT STARTTIM,SERIAL,AMT FROM FOLIO" + tableDate + " WHERE SERIAL IN(SELECT SERIAL FROM FOLIOPAYMENT" + tableDate + " WHERE PAYMENTDES IN (" + tenderCodes + ") GROUP BY SERIAL)";
+					var folios = _interBaseHelper.ReadFolioData(queryFolioSql);
+					foreach (var folio in folios)
+					{
+						string strCallUserCode = AppConfig.Instance.CallUserCode;
+						string strCallPassword = AppConfig.Instance.CallPassword;
+						string strStoreCode = AppConfig.Instance.StoreCode;
+						string strType = "SA";
+						string strSalesDate = folio.StartTim.ToString("yyyyMMdd");
+						string strSalesTime = folio.StartTim.ToString("HHMMSS"); ;
+						string strSalesDocNo = folio.Serial;
+						string strVipCode = "";
+						string strTenderCode = GetStrTenderCodes(tableDate, folio.Serial);
+						string strRemark = "";
+						string strItems = GetStrItems(tableDate, folio.Serial);
+
+						var posResult = PostToServer(strCallUserCode,
+								strCallPassword,
+								strStoreCode,
+								strType,
+								strSalesDate,
+								strSalesTime,
+								strSalesDocNo,
+								strVipCode,
+								strTenderCode,
+								strRemark,
+								strItems);
+
+
+						DispatcherHelper.CheckBeginInvokeOnUI(() =>
+						{
+							Folios.Add(new Folio
+							{
+								Serial = folio.Serial,
+								Amt = folio.Amt,
+								StartTim = folio.StartTim,
+								UploadSuccess = posResult
+							});
+						});
+
+
+						if (posResult)
+						{
+							SuccessfulCount++;
+						}
+						else
+						{
+							FailuresCount++;
+						}
+					}
+
+				}).ContinueWith(x => { UploadButtonEnabled = true; });
+
+			}
+			catch (Exception ex)
+			{
+				UploadButtonEnabled = true;
+				UploadTipsVisibility = false;
+				_logger.Error(ex);
+				return;
+			}
 		}
 
 		/// <summary>
 		/// 验证程序配置
 		/// </summary>
 		/// <returns></returns>
-	    private bool ValidationConfign(out string resultStr)
+		public void ValidationConfign()
 		{
-			#region 验证配置信息
 			List<ValidationResult> validationResult;
-			var validation = ValidateHelper.ValidateConfig(new AppConfig(), out validationResult);
+			var validation = ValidateHelper.ValidateConfig(AppConfig.Instance, out validationResult);
+			var validationResultStr = validationResult.Count > 0 ? string.Join<ValidationResult>(Environment.NewLine, validationResult.ToArray()) : string.Empty;
+			var validationResultMsg = string.Format("验证配置信息失败,点击确定关闭程序,请检查配置文件:{0}{1}", Environment.NewLine, validationResultStr);
+
 			if (!validation)
 			{
-				resultStr = string.Join<ValidationResult>("|", validationResult.ToArray());
+				Messenger.Default.Send(validationResultMsg, "ShowErrorMessage");
 			}
-			resultStr = string.Empty;
-			return validation;
-			#endregion
 		}
 
 		/// <summary>
@@ -334,23 +348,14 @@ namespace BingShengReportToBill.ViewModel
 		/// <param name="x"></param>
 		private async void UploadFolioMethod(DateTime uploadDate)
 		{
-
-			string validationResult;
-			if (ValidationConfign(out validationResult))
+			if (IsTimingUpload)
 			{
-				validationResult = "1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3\r\n1\r\n2\r\n3";
-				Messenger.Default.Send(validationResult, "ShowErrorMessage");
+				var dialog = await _dialogCoordinator.ShowMessageAsync(this, "提示", "请先关闭定时上报.");
 			}
-
-
-			//if (IsTimingUpload)
-			//{
-			//	var dialog = await _dialogCoordinator.ShowMessageAsync(this, "提示", "请先闭定时上报.");
-			//}
-			//else
-			//{
-			//	UploadFolio(uploadDate);
-			//}
+			else
+			{
+				UploadFolio(uploadDate);
+			}
 		}
 
 		/// <summary>
@@ -379,7 +384,7 @@ namespace BingShengReportToBill.ViewModel
 								string strRemark,
 								string strItems)
 		{
-			_logger.Info(string.Format("strStoreCode:{0}|strType:{1}|strSalesDate:{2}|strSalesTime:{3}|strSalesDocNo:{4}|strVipCode:{5}|strTenderCode:{6}|strRemark:{7}|strItems:{8}",
+			_logger.Info(string.Format("上报账单|strStoreCode:{0}|strType:{1}|strSalesDate:{2}|strSalesTime:{3}|strSalesDocNo:{4}|strVipCode:{5}|strTenderCode:{6}|strRemark:{7}|strItems:{8}",
 								strStoreCode,
 								strType,
 								strSalesDate,
@@ -389,10 +394,38 @@ namespace BingShengReportToBill.ViewModel
 								strTenderCode,
 								strRemark,
 								strItems));
+			return false;
+			try
+			{
+				var node = _posSoapClient.PostSales(strCallUserCode, strCallPassword, strStoreCode, strType,
+				strSalesDate, strSalesTime, strSalesDocNo, strVipCode, strTenderCode, strRemark, strItems);
+				if (node != null)
+				{
+					_logger.Info(string.Format("上报账单|{0},返回:{0}.,", strSalesDocNo, node.InnerText));
+					var responseNode = node.SelectSingleNode("Response");
+					if (responseNode != null)
+					{
+						var resultNode = node.SelectSingleNode("Result");
+						if (resultNode != null)
+						{
+							var errorCode = resultNode.SelectSingleNode("ErrorCode").Value;
+							var result = resultNode.SelectSingleNode("Result").Value;
 
-			return true;
-			//pos.PostSales(strCallUserCode, strCallPassword, strStoreCode, strType,
-			//	strSalesDate, strSalesTime, strSalesDocNo, strVipCode, strTenderCode, strRemark, strItems);
+							if (errorCode == "0")
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+
+				_logger.Error(ex);
+			}
+
+			return false;
 
 		}
 
@@ -412,11 +445,11 @@ namespace BingShengReportToBill.ViewModel
 			int excessAmount = 0;
 			foreach (var item in queryFolioPaymentResult)
 			{
-				string payNum = AppConfig.DefaultPayNum;
+				string payNum = AppConfig.Instance.DefaultPayNum;
 
-				if (AppConfig.PayDictionary.ContainsKey(item.PaymentDes))
+				if (AppConfig.Instance.PayDictionary.ContainsKey(item.PaymentDes))
 				{
-					payNum = AppConfig.PayDictionary[item.PaymentDes];
+					payNum = AppConfig.Instance.PayDictionary[item.PaymentDes];
 				}
 				string str = string.Format("{{{0},{1},{2},{3}}}", payNum, item.Amt, changeAmount, excessAmount);
 				tenderCodeList.Add(str);
@@ -439,12 +472,17 @@ namespace BingShengReportToBill.ViewModel
 
 			foreach (var ordr in queryOrderResult)
 			{
-				string str = string.Format("{{{0},{1},{2}}}", AppConfig.SKU, ordr.Cnt, ordr.Amt);
+				string str = string.Format("{{{0},{1},{2}}}", AppConfig.Instance.SKU, ordr.Cnt, ordr.Amt);
 				strItemsList.Add(str);
 			}
 
 			var returnValue = string.Join(",", strItemsList.ToArray());
 			return returnValue;
+		}
+
+		public override void Cleanup()
+		{
+			base.Cleanup();
 		}
 		#endregion
 

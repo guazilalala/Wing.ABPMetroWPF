@@ -15,7 +15,7 @@ namespace BingShengReportToBill.Helper
 		{
 			var validationContext = new ValidationContext(config, serviceProvider: null, items: null);
 			var results = new List<ValidationResult>();
-			var isValid = Validator.TryValidateObject(config, validationContext, results, true);
+			var isValid = Validator.TryValidateObject(config, validationContext, results, false);
 			if (!isValid)
 			{
 				validationResult = results;
