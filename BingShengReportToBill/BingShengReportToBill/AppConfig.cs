@@ -10,7 +10,7 @@ namespace BingShengReportToBill
 	public sealed class AppConfig
 	{
 		private static AppConfig _instance = null;
-		private static readonly object padLock = new object();
+		private static readonly object _lock = new object();
 		private AppConfig()
 		{
 			ServerName = ConfigurationManager.AppSettings.Get("ServerName");
@@ -56,7 +56,7 @@ namespace BingShengReportToBill
 		{
 			get
 			{
-				lock (padLock)
+				lock (_lock)
 				{
 					if (_instance == null)
 					{
@@ -66,6 +66,9 @@ namespace BingShengReportToBill
 				return _instance;
 			}
 		}
+
+		public static string AppVersion => "1.0.18.0312";
+
 		/// <summary>
 		/// 数据库IP地址
 		/// </summary>

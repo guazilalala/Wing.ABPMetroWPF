@@ -7,7 +7,7 @@
     <ProjectGuid>{EB73B0EA-BD78-4FE7-88EF-DF5249EC089F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BingShengReportToBill</RootNamespace>
-    <AssemblyName>炳胜上报帐单</AssemblyName>
+    <AssemblyName>炳胜上报账单</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -28,7 +28,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -120,7 +120,6 @@
     <Compile Include="Extentions\ToDictionaryExtentions.cs" />
     <Compile Include="Helper\InterBaseHelper.cs" />
     <Compile Include="Helper\ValidateHelper.cs" />
-    <Compile Include="Converter\UploadSuccessConverter.cs" />
     <Compile Include="Model\Folio.cs" />
     <Compile Include="Model\FolioPayment.cs" />
     <Compile Include="Model\Ordr.cs" />
@@ -164,6 +163,9 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Content Include="dbxadapter30.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="gds32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -189,7 +191,9 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Converter\" />
+  </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\UploadService\" />
   </ItemGroup>

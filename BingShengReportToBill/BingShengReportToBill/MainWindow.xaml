@@ -8,17 +8,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converter="clr-namespace:BingShengReportToBill.Converter"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:BingShengReportToBill"
         mc:Ignorable="d"
         Height="600" 
         Width="800"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding Main, Source={StaticResource Locator}}" 
         ResizeMode="NoResize"
-        BorderThickness="0" 
-        WindowTransitionsEnabled="False"
-        GlowBrush="{DynamicResource AccentColorBrush}" Loaded="load_Loaded">
+    Loaded="load_Loaded">
     <Controls:MetroWindow.Resources>
         <Style x:Key="AccentedSquareButtonStyle"
            BasedOn="{StaticResource SquareButtonStyle}"
@@ -33,7 +31,6 @@
             <Setter Property="OnLabel" Value="定时上报: 开" />
             <Setter Property="SwitchForeground" Value="{DynamicResource AccentColorBrush}" />
         </Style>
-        <converter:UploadSuccessConverter x:Key="UploadSuccessConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Controls:MetroWindow.Resources>
     <Controls:MetroWindow.TitleTemplate>
@@ -65,8 +62,13 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,10,10,0">
             <TextBlock Text="日期:" VerticalAlignment="Center" FontSize="16" FontFamily="Microsoft YaHei UI Light" />
-            <DatePicker x:Name="uploadDatePciker" Margin="3,0,0,0" Width="120" VerticalContentAlignment="Center" FontFamily="Microsoft JhengHei UI Light"
-                        SelectedDate="{Binding SelectedUpoladDate}"/>
+            <DatePicker x:Name="uploadDatePciker" 
+                        Margin="3,0,0,0" 
+                        Width="120" 
+                        VerticalContentAlignment="Center"
+                        FontFamily="Microsoft JhengHei UI Light"
+                        SelectedDate="{Binding SelectedUpoladDate}"
+                        IsEnabled="{Binding ElementName=btnUpload, Path=IsEnabled}"/>
             <Button x:Name="btnUpload" Margin="30,0,0,0"
                     Width="90" 
                     Content="上报数据" 
@@ -79,7 +81,9 @@
                     IsEnabled="{Binding UploadButtonEnabled, Mode=TwoWay}">
             </Button>
             <Rectangle VerticalAlignment="Stretch" Width="1" Margin="74,0,74,0" Stroke="LightGray" />
-            <Controls:ToggleSwitch x:Name="timingUpload"  IsChecked="{Binding IsTimingUpload}"                      
+            <Controls:ToggleSwitch x:Name="timingUpload"  
+                                   IsChecked="{Binding IsTimingUpload}"
+                                   IsEnabled="{Binding ElementName=btnUpload,Path=IsEnabled}"
                                    Style="{DynamicResource CustomMetroToggleSwitch}" 
                                    FontSize="16" 
                                    FontFamily="Microsoft YaHei UI Light" >
@@ -109,9 +113,14 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding StartTim,StringFormat='yyyy-MM-dd HH:mm:ss'}" Header="时间" />
                 <DataGridTextColumn Binding="{Binding Serial}" Header="订单号" />
-                <DataGridTextColumn Binding="{Binding UploadSuccess, Converter={StaticResource UploadSuccessConverter}}" Header="状态">
+                <DataGridTextColumn Binding="{Binding UploadResult}" Header="状态">
                 </DataGridTextColumn>
             </DataGrid.Columns>
+            <DataGrid.RowHeaderStyle>
+                <Style BasedOn="{StaticResource MetroDataGridRowHeader}" TargetType="{x:Type DataGridRowHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.RowHeaderStyle>
             <DataGrid.Style>
                 <Style BasedOn="{StaticResource MetroDataGrid}" TargetType="{x:Type DataGrid}">
                     <Setter Property="AlternatingRowBackground" Value="{DynamicResource GrayBrush10}" />
@@ -137,9 +146,9 @@
             </DataGrid.RowStyle>
         </DataGrid>
         <StatusBar Grid.Row="2" Height="25">
-            <StatusBarItem Content="Version 1.0.18.0308"></StatusBarItem>
+            <StatusBarItem Margin="5,0,0,0" Content="{x:Static local:AppConfig.AppVersion}" ContentStringFormat="版本 {0}"></StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal" Margin="0,0,10,0"
+                <StackPanel Orientation="Horizontal" Margin="0,0,5,0"
                             Visibility="{Binding UploadTipsVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="正在处理" VerticalAlignment="Center" FontSize="14" Visibility="{Binding ProcessingEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Controls:ProgressRing 

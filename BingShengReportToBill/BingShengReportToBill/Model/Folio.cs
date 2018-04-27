@@ -17,7 +17,12 @@ namespace BingShengReportToBill.Model
 		/// </summary>
 		public string Amt { get; set; }
 		/// <summary>
-		/// 上传状态
+		/// 上传结果
+		/// </summary>
+		public string UploadResult { get; set; }
+
+		/// <summary>
+		/// 是否上传成功
 		/// </summary>
 		public bool UploadSuccess { get; set; }
 	}

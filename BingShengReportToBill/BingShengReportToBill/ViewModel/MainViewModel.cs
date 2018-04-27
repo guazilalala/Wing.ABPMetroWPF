@@ -96,6 +96,15 @@ namespace BingShengReportToBill.ViewModel
 							if (dateTimeNow == timingTime)
 							{
 								UploadButtonEnabled = false;
+								UploadTipsVisibility = true;
+
+								if (! _interBaseHelper.TestConnect())
+								{
+									_logger.Error("定时上报失败,数据库连接失败.");
+									UploadButtonEnabled = true;
+									UploadTipsVisibility = false;
+									continue;
+								}
 								UploadFolio(SelectedUpoladDate);
 								Thread.Sleep(1000 * 61);
 							}
@@ -105,7 +114,7 @@ namespace BingShengReportToBill.ViewModel
 				}
 				catch (Exception ex)
 				{
-					_logger.Error(ex);
+					_logger.Error(ex,ex.ToString());
 				}
 				RaisePropertyChanged(() => IsTimingUpload);
 			}
@@ -130,7 +139,7 @@ namespace BingShengReportToBill.ViewModel
 				}
 				catch (Exception ex)
 				{
-					_logger.Error(ex);
+					_logger.Error(ex, ex.ToString());
 				}
 				RaisePropertyChanged(() => TimingUploadTime);
 			}
@@ -235,12 +244,11 @@ namespace BingShengReportToBill.ViewModel
 		/// <param name="uploadDate">上报日期</param>
 		private void UploadFolio(DateTime uploadDate)
 		{
-
 			try
 			{
 				_posSoapClient = new UploadService.posSoapClient();
-				//string tableTime = date.ToString("yyMMdd");
-				string tableDate = uploadDate.ToString("180101");
+				string tableDate = uploadDate.ToString("yyMMdd");
+				//string tableDate = uploadDate.ToString("180101");
 
 
 				var tenderCodeArray = AppConfig.Instance.TenderCode.Split(',');
@@ -264,6 +272,7 @@ namespace BingShengReportToBill.ViewModel
 				{
 					string queryFolioSql = "SELECT STARTTIM,SERIAL,AMT FROM FOLIO" + tableDate + " WHERE SERIAL IN(SELECT SERIAL FROM FOLIOPAYMENT" + tableDate + " WHERE PAYMENTDES IN (" + tenderCodes + ") GROUP BY SERIAL)";
 					var folios = _interBaseHelper.ReadFolioData(queryFolioSql);
+
 					foreach (var folio in folios)
 					{
 						string strCallUserCode = AppConfig.Instance.CallUserCode;
@@ -271,13 +280,14 @@ namespace BingShengReportToBill.ViewModel
 						string strStoreCode = AppConfig.Instance.StoreCode;
 						string strType = "SA";
 						string strSalesDate = folio.StartTim.ToString("yyyyMMdd");
-						string strSalesTime = folio.StartTim.ToString("HHMMSS"); ;
+						string strSalesTime = folio.StartTim.ToString("HHMMss"); ;
 						string strSalesDocNo = folio.Serial;
 						string strVipCode = "";
 						string strTenderCode = GetStrTenderCodes(tableDate, folio.Serial);
 						string strRemark = "";
 						string strItems = GetStrItems(tableDate, folio.Serial);
 
+						string errorMessage;
 						var posResult = PostToServer(strCallUserCode,
 								strCallPassword,
 								strStoreCode,
@@ -288,8 +298,8 @@ namespace BingShengReportToBill.ViewModel
 								strVipCode,
 								strTenderCode,
 								strRemark,
-								strItems);
-
+								strItems,
+								out errorMessage);
 
 						DispatcherHelper.CheckBeginInvokeOnUI(() =>
 						{
@@ -298,6 +308,7 @@ namespace BingShengReportToBill.ViewModel
 								Serial = folio.Serial,
 								Amt = folio.Amt,
 								StartTim = folio.StartTim,
+								UploadResult = posResult ? "上报成功" : "上报失败," + errorMessage + ".",
 								UploadSuccess = posResult
 							});
 						});
@@ -313,14 +324,19 @@ namespace BingShengReportToBill.ViewModel
 						}
 					}
 
-				}).ContinueWith(x => { UploadButtonEnabled = true; });
+				}).ContinueWith(x => {
+
+					_logger.Info(string.Format("上报完毕,成功:{0},失败:{1}.", SuccessfulCount,FailuresCount));
+					UploadButtonEnabled = true;
+				});
 
 			}
 			catch (Exception ex)
 			{
+				_logger.Info(ex,string.Format("上报错误,成功:{0},失败:{1}.", SuccessfulCount, FailuresCount));
 				UploadButtonEnabled = true;
 				UploadTipsVisibility = false;
-				_logger.Error(ex);
+				_logger.Error(ex, ex.ToString());
 				return;
 			}
 		}
@@ -348,14 +364,26 @@ namespace BingShengReportToBill.ViewModel
 		/// <param name="x"></param>
 		private async void UploadFolioMethod(DateTime uploadDate)
 		{
+			UploadButtonEnabled = false;
+			UploadTipsVisibility = true;
 			if (IsTimingUpload)
 			{
 				var dialog = await _dialogCoordinator.ShowMessageAsync(this, "提示", "请先关闭定时上报.");
+				UploadButtonEnabled = true;
+				UploadTipsVisibility = false;
+
+				return;
 			}
-			else
+			if (! await _interBaseHelper.TestConnectAsync())
 			{
-				UploadFolio(uploadDate);
+				var dialog = await _dialogCoordinator.ShowMessageAsync(this, "提示", "数据库连接失败.");
+				UploadButtonEnabled = true;
+				UploadTipsVisibility = false;
+				return;
 			}
+
+			UploadFolio(uploadDate);
+
 		}
 
 		/// <summary>
@@ -382,7 +410,8 @@ namespace BingShengReportToBill.ViewModel
 								string strVipCode,
 								string strTenderCode,
 								string strRemark,
-								string strItems)
+								string strItems,
+								out string outErrorMessage)
 		{
 			_logger.Info(string.Format("上报账单|strStoreCode:{0}|strType:{1}|strSalesDate:{2}|strSalesTime:{3}|strSalesDocNo:{4}|strVipCode:{5}|strTenderCode:{6}|strRemark:{7}|strItems:{8}",
 								strStoreCode,
@@ -394,7 +423,9 @@ namespace BingShengReportToBill.ViewModel
 								strTenderCode,
 								strRemark,
 								strItems));
-			return false;
+			outErrorMessage = "参数错误";
+			return true;
+			string errorMessage = "";
 			try
 			{
 				var node = _posSoapClient.PostSales(strCallUserCode, strCallPassword, strStoreCode, strType,
@@ -410,10 +441,14 @@ namespace BingShengReportToBill.ViewModel
 						{
 							var errorCode = resultNode.SelectSingleNode("ErrorCode").Value;
 							var result = resultNode.SelectSingleNode("Result").Value;
-
+						    outErrorMessage = resultNode.SelectSingleNode("ErrorMessage").Value;
 							if (errorCode == "0")
 							{
 								return true;
+							}
+							else
+							{
+								return false;
 							}
 						}
 					}
@@ -421,12 +456,11 @@ namespace BingShengReportToBill.ViewModel
 			}
 			catch (Exception ex)
 			{
-
-				_logger.Error(ex);
+				_logger.Error(ex, ex.ToString());
+				errorMessage = "程序错误";	
 			}
-
+			outErrorMessage = errorMessage;
 			return false;
-
 		}
 
 		/// <summary>
@@ -438,21 +472,24 @@ namespace BingShengReportToBill.ViewModel
 		public string GetStrTenderCodes(string tableDate, string serial)
 		{
 			List<string> tenderCodeList = new List<string>();
-			string queryFolioPaymentSql = "SELECT PAYMENTDES,AMT FROM FOLIOPAYMENT" + tableDate + " WHERE SERIAL=" + serial + "";
+			string queryFolioPaymentSql = "SELECT PAYMENTDES,SUM(AMT) AMT FROM FOLIOPAYMENT" + tableDate + " WHERE SERIAL=" + serial + " GROUP BY PAYMENTDES";
 			var queryFolioPaymentResult = _interBaseHelper.ReadFolioPaymentData(queryFolioPaymentSql);
 
 			int changeAmount = 0;
 			int excessAmount = 0;
 			foreach (var item in queryFolioPaymentResult)
 			{
-				string payNum = AppConfig.Instance.DefaultPayNum;
-
-				if (AppConfig.Instance.PayDictionary.ContainsKey(item.PaymentDes))
+				if (item.Amt >0)
 				{
-					payNum = AppConfig.Instance.PayDictionary[item.PaymentDes];
+					string payNum = AppConfig.Instance.DefaultPayNum;
+
+					if (AppConfig.Instance.PayDictionary.ContainsKey(item.PaymentDes))
+					{
+						payNum = AppConfig.Instance.PayDictionary[item.PaymentDes];
+					}
+					string str = string.Format("{{{0},{1},{2},{3}}}", payNum, item.Amt, changeAmount, excessAmount);
+					tenderCodeList.Add(str);
 				}
-				string str = string.Format("{{{0},{1},{2},{3}}}", payNum, item.Amt, changeAmount, excessAmount);
-				tenderCodeList.Add(str);
 			}
 			var returnValue = string.Join(",", tenderCodeList.ToArray());
 			return returnValue;
@@ -460,14 +497,13 @@ namespace BingShengReportToBill.ViewModel
 		/// <summary>
 		/// 获取strItems
 		/// </summary>
-		/// <param name="tableName">表日期</param>
+		/// <param name="tableDate">表日期</param>
 		/// <param name="serial">订单号</param>
 		/// <returns></returns>
-		public string GetStrItems(string tableName, string serial)
+		public string GetStrItems(string tableDate, string serial)
 		{
 			List<string> strItemsList = new List<string>();
-
-			string queryOrdrSql = "SELECT CNT,AMT,DISC FROM ORDR" + tableName + " WHERE CODE =" + serial + "";
+			string queryOrdrSql = "SELECT CNT,(AMT + TAX - BZEROAMT + SVCCHG) AMT FROM ORDR" + tableDate + " WHERE CODE = " + serial + "";
 			var queryOrderResult = _interBaseHelper.ReadOrdrData(queryOrdrSql);
 
 			foreach (var ordr in queryOrderResult)

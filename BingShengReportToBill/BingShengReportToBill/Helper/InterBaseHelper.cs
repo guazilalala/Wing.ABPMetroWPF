@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace BingShengReportToBill.Helper
 {
@@ -38,7 +39,7 @@ namespace BingShengReportToBill.Helper
 					{
 						if (ex.Message != "message length error (encountered 0, expected 8)" && ex.Message != "message length error (encountered 0, expected 12)")
 						{
-							_logger.Error(ex, "执行SQL错误:");
+							_logger.Error(string.Format("执行SQL错误:{0}.",ex));
 						}
 						return NonQuery;
 					}
@@ -70,7 +71,7 @@ namespace BingShengReportToBill.Helper
 					}
 					catch (Exception ex)
 					{
-						_logger.Error(ex, "执行SQL错误:");
+						_logger.Error(string.Format("执行SQL错误:{0}.", ex));
 						return null;
 					}
 					finally
@@ -122,7 +123,7 @@ namespace BingShengReportToBill.Helper
 					}
 					catch (Exception ex)
 					{
-						_logger.Error(ex, "执行SQL错误:");
+						_logger.Error(string.Format("执行SQL错误:{0}.", ex));
 					}
 					finally
 					{
@@ -166,7 +167,7 @@ namespace BingShengReportToBill.Helper
 									Serial = reader["SERIAL"].ToString(),
 									StartTim = Convert.ToDateTime(reader["STARTTIM"]),
 									Amt = reader["AMT"].ToString(),
-									UploadSuccess = true
+									UploadResult = ""
 								});
 							}
 						}
@@ -233,8 +234,7 @@ namespace BingShengReportToBill.Helper
 								ordrs.Add(new Ordr
 								{
 									Cnt = Convert.ToInt32(reader["CNT"]),
-									Amt = Convert.ToDouble(reader["AMT"]),
-									Disc = Convert.ToDouble(reader["DISC"]),
+									Amt = Convert.ToDouble(reader["AMT"])
 								});
 							}
 						}
@@ -266,11 +266,36 @@ namespace BingShengReportToBill.Helper
 				}
 				catch (Exception ex)
 				{
-					_logger.Error(ex, "执行SQL错误:");
+					_logger.Error(string.Format("测试数据库连接失败:{0}.", ex));
 					return false;
 				}
-
 			}
+		}
+
+		/// <summary>
+		/// 测试数据库是否连接成功
+		/// </summary>
+		/// <returns></returns>
+		public async Task<bool> TestConnectAsync()
+		{
+			return await Task.Factory.StartNew(() =>
+			{
+				try
+				{
+					TAdoDbxCommand cmd = new TAdoDbxCommand();
+					cmd.Connection = new TAdoDbxConnection(_connectionString);
+					cmd.Connection.Open();
+					cmd.Connection.Close();
+					return true;
+				}
+				catch (Exception ex)
+				{
+					_logger.Error(string.Format("测试数据库连接失败:{0}.", ex));
+					return false;
+				}
+			});
+
+
 		}
 	}
 }

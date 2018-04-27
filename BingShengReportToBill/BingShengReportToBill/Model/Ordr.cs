@@ -9,6 +9,5 @@ namespace BingShengReportToBill.Model
 	{
 		public int Cnt { get; set; }
 		public double Amt { get; set; }
-		public double Disc { get; set; }
 	}
 }
